@@ -1,5 +1,10 @@
 from gym.envs.registration import registry, register, make, spec
 
+register(
+    id='sheep-v0',
+    entry_point='gym.envs.sheep:SheepEnv',
+)
+
 # Algorithmic
 # ----------------------------------------
 

@@ -25,6 +25,12 @@ web_base = os.environ.get('OPENAI_GYM_WEB_BASE', 'https://gym.openai.com')
 # groups
 
 add_group(
+    id='sheep',
+    name='Sheep',
+    description='Herd a flock of sheep.'
+)
+
+add_group(
     id='classic_control',
     name='Classic control',
     description='Classic control problems from the RL literature.'
@@ -76,6 +82,12 @@ add_group(
     id='safety',
     name='Safety',
     description='Environments to test various AI safety properties.'
+)
+
+add_task(
+    id='sheep-v0',
+    summary="Move a herd of sheep.",
+    group='sheep',
 )
 
 # classic control

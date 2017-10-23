@@ -1,11 +1,16 @@
 import numpy
 from math import sqrt
 
+screen_Width = 0
+screen_Height = 0
+
 class SheepGroup():
     NEIGHBOR_RADIUS = 50
-    def __init__(self,sheepCount):
+    def __init__(self,sheepCount,screenWidth,screenHeight):
         self.sheepCount = sheepCount
         self.SheepList = []
+        screen_Width=screenWidth
+        screen_Height = screenHeight
         for i in range(sheepCount):
             self.SheepList.append(SingleSheep())
     def updateLocations(self):
@@ -27,8 +32,8 @@ class SheepGroup():
             thisSheep.alignment(sheepNeighbors)
             # TO-DO separation function
             thisSheep.separation(sheepNeighbors,minDistance=5)
-            # TO-DO update funtion
-            #thisSheep.update(False)
+            # Validate location and velocityt adjusted in previous functions
+            thisSheep.validateParams()
 
         return
 
@@ -154,6 +159,16 @@ class SingleSheep():
 
         return
 
+    def validateParams(self):
+        if self.X < 0 and self.velocityX < 0:
+            self.velocityX = -self.velocityX
+        if self.X > screen_Width and self.velocityX > 0:
+            self.velocityX = -self.velocityX
+        if self.Y < 0 and self.velocityY < 0:
+            self.velocityY = -self.velocityY
+        if self.Y > screen_Height and self.velocityY > 0:
+            self.velocityY = -self.velocityY
+        return
 
 
 

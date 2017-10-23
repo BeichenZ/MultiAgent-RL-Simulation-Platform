@@ -8,8 +8,8 @@ import pdb
 class SheepEnv(gym.Env):
   metadata = {'render.modes': ['human']}
   #Env Set-up variable
-  screen_width =600
-  screen_height = 600
+  SCREEN_WIDTH =600
+  SCREEN_HEIGHT = 600
   def __init__(self):
     self.action_space = spaces.Discrete(4)
     self.viewer = None
@@ -18,12 +18,12 @@ class SheepEnv(gym.Env):
     self.sheep_positions = [[50, 100], [267, 234]]
 
     #To-Do:initialize the group of sheep
-    self.sheepGroup = SheepGroup.SheepGroup(sheepCount = 10);
+    self.sheepGroup = SheepGroup.SheepGroup(10,self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
     self.reset()
     return
 
   def _step(self, action):
-  	# use Boids to update sheep positions. Below is just a placeholder
+    # use Boids to update sheep positions. Below is just a placeholder
   	# which make them move diagonally
   	#for i in range(len(self.sheep_positions)):
   		#self.sheep_positions[i][0] -= 1
@@ -33,7 +33,7 @@ class SheepEnv(gym.Env):
     return
 
   def _reset(self):
-  	return
+    return
 
   def _render(self, mode='human', close=False):
     if close:
@@ -44,7 +44,7 @@ class SheepEnv(gym.Env):
 
 
     if self.viewer is None:
-        self.viewer = rendering.Viewer(self.screen_width, self.screen_height)
+        self.viewer = rendering.Viewer(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.circTranlations = []
         for i in range(len(self.sheep_positions)):
             translation = rendering.Transform()
@@ -56,7 +56,7 @@ class SheepEnv(gym.Env):
         
 
     for ind, translation in enumerate(self.circTranlations):
-    	translation.set_translation(self.sheep_positions[ind][0], self.sheep_positions[ind][1])
+        translation.set_translation(self.sheep_positions[ind][0], self.sheep_positions[ind][1])
     
     return self.viewer.render(return_rgb_array = mode=='rgb_array')
     

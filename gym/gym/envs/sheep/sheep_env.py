@@ -29,7 +29,7 @@ class SheepEnv(gym.Env):
   		#self.sheep_positions[i][0] -= 1
   		#self.sheep_positions[i][1] -= 1
     #TO-Do: Implementi Action for Shepherd
-    self.sheepGroup.UpdateLocations();
+    self.sheepGroup.updateLocations();
     return
 
   def _reset(self):

@@ -1,4 +1,5 @@
 import numpy
+from math import sqrt
 
 class SheepGroup():
     NEIGHBOR_RADIUS = 50
@@ -13,8 +14,8 @@ class SheepGroup():
             for otherSheep in self.SheepList:
                 if otherSheep == thisSheep:
                     continue #skip for itself
-                #TO-DO add the DistanceTo function
-                distance = thisSheep.DistanceTo(otherSheep,False)
+                #TO-DO add the distanceTo function
+                distance = thisSheep.distanceTo(otherSheep)
                 if distance < self.NEIGHBOR_RADIUS:
                     sheepNeighbors.append(otherSheep)
 
@@ -25,9 +26,9 @@ class SheepGroup():
             #TO-DO alignment function
             thisSheep.alignment(sheepNeighbors)
             # TO-DO separation function
-            thisSheep.separation(sheepNeighbors)
+            thisSheep.separation(sheepNeighbors,minDistance=5)
             # TO-DO update funtion
-            thisSheep.update(False)
+            #thisSheep.update(False)
 
         return
 
@@ -57,6 +58,101 @@ class SingleSheep():
         self.separationW = separationW;
         self.MaxVelocity = MaxVelocity;
         self.sheepImagePath = sheepImage;
+        self.velocityX = numpy.random.random_integers(0,1000)/100;
+        self.velocityY = numpy.random.random_integers(0,1000)/100;
+
+        #Initialize Velocity Randomly
+
+    def distanceTo (self,anotherObject):
+        x=self.X-anotherObject.X;
+        y=self.Y-anotherObject.Y;
+        return sqrt(x*x+y*y)
+
+    def cohesion(self,neighborList):
+        neighborCount = len(neighborList)
+        if neighborCount<1:
+            return
+
+        average_x = 0
+        average_y = 0
+        for neighborSheep in neighborList:
+            # TO-DO: Two sheep cannot on same-point.Need to change!
+            if neighborSheep.X == self.X and neighborSheep.Y == self.Y:
+                continue
+
+            average_x += (self.X - neighborSheep.X)
+            average_y += (self.Y - neighborSheep.Y)
+
+        average_x /= neighborCount
+        average_y /= neighborCount
+
+        # TO-DO: Expose Cohesion_weight as one of turning parameters
+
+        self.velocityX -= (average_x / self.cohesionW)
+        self.velocityY -= (average_y / self.cohesionW)
+
+        return
+
+    def alignment(self,neighborList):
+        neighborCount = len(neighborList)
+        if neighborCount < 1:
+            return
+
+        average_x = 0
+        average_y = 0
+
+        for sheep in neighborList:
+            average_x += sheep.velocityX
+            average_y += sheep.velocityY
+
+        average_x /= neighborCount
+        average_y /= neighborCount
+
+        # set our velocity towards the others
+        self.velocityX += (average_x / self.alignmentW)
+        self.velocityY += (average_x / self.alignmentW)
+
+        return
+
+    def separation(self,neighborList,minDistance):
+
+        #Move away from neighbors to avoid crowding
+        neighborCount = len(neighborList)
+        if neighborCount < 1:
+            return
+
+        distance_x = 0
+        distance_y = 0
+        num_close = 0
+
+        for neighbor in neighborList:
+            distance = self.distanceTo(neighbor)
+
+            if distance < minDistance:
+                num_close += 1
+                xdiff = (self.X - neighbor.X)
+                ydiff = (self.Y - neighbor.Y)
+
+                if xdiff >= 0:
+                    xdiff = sqrt(minDistance) - xdiff
+                elif xdiff < 0:
+                    xdiff = -sqrt(minDistance) - xdiff
+
+                if ydiff >= 0:
+                    ydiff  = sqrt(minDistance) - ydiff
+                elif ydiff < 0:
+                    ydiff = -sqrt(minDistance) - ydiff
+
+                distance_x += xdiff
+                distance_y += ydiff
+
+        if num_close == 0:
+            return
+
+        self.velocityX -= distance_x / self.separationW
+        self.velocityY -= distance_y / self.separationW
+
+        return
 
 
 

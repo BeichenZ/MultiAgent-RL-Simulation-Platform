@@ -5,10 +5,12 @@ screen_Width = 0
 screen_Height = 0
 
 class SheepGroup():
-    NEIGHBOR_RADIUS = 50
+    NEIGHBOR_RADIUS = 600
     def __init__(self,sheepCount,screenWidth,screenHeight):
         self.sheepCount = sheepCount
         self.SheepList = []
+        global screen_Width
+        global screen_Height
         screen_Width=screenWidth
         screen_Height = screenHeight
         for i in range(sheepCount):
@@ -19,7 +21,6 @@ class SheepGroup():
             for otherSheep in self.SheepList:
                 if otherSheep == thisSheep:
                     continue #skip for itself
-                #TO-DO add the distanceTo function
                 distance = thisSheep.distanceTo(otherSheep)
                 if distance < self.NEIGHBOR_RADIUS:
                     sheepNeighbors.append(otherSheep)
@@ -39,24 +40,24 @@ class SheepGroup():
 
 
 class SingleSheep():
-    X_def = numpy.random.random_integers(0,600);
-    Y_def = numpy.random.random_integers(0,600);
     cohesionW_def = 10;
     alignmentW_def = 4;
     separationW_def = 0.5;
     ObstacleAvoidW_def = 1;
     goalW_def = 6;
     fieldofView_def = 6;
-    MaxVelocity_def = 60;
+    MaxVelocity_def = 6;
     #Place-holder for later Image
     sheepImage_def = "/resource/sheep1.png"
 
 
-    def __init__(self,X=X_def,Y=Y_def,
+    def __init__(self,X=None,Y=None,
                  cohesionW=cohesionW_def,alignmentW = alignmentW_def,separationW = separationW_def,
                  MaxVelocity = MaxVelocity_def,sheepImage = sheepImage_def):
-        self.X = X;
-        self.Y = Y;
+        global screen_Height
+        global screen_Width
+        self.X = numpy.random.randint(0, screen_Width) if X is None else X
+        self.Y = numpy.random.randint(0, screen_Height) if Y is None else Y
 
         self.cohesionW = cohesionW;
         self.alignmentW = alignmentW;

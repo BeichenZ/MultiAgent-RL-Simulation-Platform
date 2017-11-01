@@ -49,7 +49,7 @@ class SheepEnv(gym.Env):
         self.circTranlations = []
         for sheep in curSheepList:
             translation = rendering.Transform()
-            circ = rendering.make_circle(2)
+            circ = rendering.make_circle(5)
             circ.set_color(.5, .5, 0.5)
             circ.add_attr(translation)
             self.viewer.add_geom(circ)
@@ -58,6 +58,6 @@ class SheepEnv(gym.Env):
     #for ind, translation in enumerate(self.circTranlations):
         #translation.set_translation(self.sheep_positions[ind][0], self.sheep_positions[ind][1])
     for ind, translation in enumerate(self.circTranlations):
-        translation.set_translation(curSheepList[ind].X+curSheepList[ind].velocityX,curSheepList[ind].Y+curSheepList[ind].velocityY)
+        translation.set_translation(curSheepList[ind].X,curSheepList[ind].Y)
     return self.viewer.render(return_rgb_array = mode=='rgb_array')
     

@@ -6,6 +6,7 @@ screen_Height = 0
 
 class SheepGroup():
     NEIGHBOR_RADIUS = 600
+    
     def __init__(self,sheepCount,screenWidth,screenHeight):
         self.sheepCount = sheepCount
         self.SheepList = []
@@ -35,6 +36,8 @@ class SheepGroup():
             thisSheep.separation(sheepNeighbors,minDistance=5)
             # Validate location and velocityt adjusted in previous functions
             thisSheep.validateParams()
+            # Update Next Location with by adding the new velocity calculated up to this line.
+            thisSheep.validateAndUpdateLocation()
 
         return
 
@@ -171,7 +174,10 @@ class SingleSheep():
             self.velocityY = -self.velocityY
         return
 
-
+    def validateAndUpdateLocation(self):
+        self.validateParams()
+        self.X = self.X + self.velocityX
+        self.Y = self.Y + self.velocityY
 
 
 

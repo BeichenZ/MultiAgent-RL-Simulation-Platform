@@ -16,11 +16,7 @@ class SheepEnv(gym.Env):
   def __init__(self):
     self.action_space = spaces.Discrete(4)
     self.viewer = None
-    #TO-DO: enable # of sheeps as a input parameter
-    #TO-DO: make the sheep positions random
-    self.sheep_positions = [[50, 100], [267, 234]]
 
-    #To-Do:initialize the group of sheep
     self.sheepGroup = SheepGroup.SheepGroup( 10 ,self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
 
     self.dogGroup = DogGroup.DogGroup(self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
@@ -28,11 +24,6 @@ class SheepEnv(gym.Env):
     return
 
   def _step(self, action=None):
-    # use Boids to update sheep positions. Below is just a placeholder
-  	# which make them move diagonally
-  	#for i in range(len(self.sheep_positions)):
-  		#self.x[i][0] -= 1
-  		#self.sheep_positions[i][1] -= 1
     #TO-Do: Implementi Action for Shepherd
     self.sheepGroup.updateLocations()
     return
@@ -87,8 +78,6 @@ class SheepEnv(gym.Env):
             self.viewer.add_geom(circ)
             self.dogTranlations.append(translation)
 
-    #for ind, translation in enumerate(self.circTranlations):
-        #translation.set_translation(self.sheep_positions[ind][0], self.sheep_positions[ind][1])
     for ind, translation in enumerate(self.sheepTranlations):
         translation.set_translation(curSheepList[ind].X,curSheepList[ind].Y)
     for ind, translation in enumerate(self.dogTranlations):

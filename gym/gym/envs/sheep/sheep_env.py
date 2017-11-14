@@ -12,7 +12,7 @@ class SheepEnv(gym.Env):
   #Env Set-up variable
   SCREEN_WIDTH =1200
   SCREEN_HEIGHT = 700
-  Default_SheepCount = 10
+  Default_SheepCount = 100
   def __init__(self):
     self.action_space = spaces.Discrete(4)
     self.viewer = None

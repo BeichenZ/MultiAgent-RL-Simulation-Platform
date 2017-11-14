@@ -3,15 +3,19 @@ from math import sqrt
 
 screen_Width = 0
 screen_Height = 0
+minDistanceWeight = 20
 
 class SheepGroup():
     NEIGHBOR_RADIUS = 200
 
+
     def __init__(self,sheepCount,screenWidth,screenHeight):
         self.sheepCount = sheepCount
-        self.SheepList = []
         global screen_Width
         global screen_Height
+        global minDistanceWeight
+        self.minInterSheepDistance = self.NEIGHBOR_RADIUS/ minDistanceWeight;
+        self.SheepList = []
         screen_Width=screenWidth
         screen_Height = screenHeight
         for i in range(sheepCount):
@@ -33,7 +37,7 @@ class SheepGroup():
             #TO-DO alignment function
             thisSheep.alignment(sheepNeighbors)
             # TO-DO separation function
-            thisSheep.separation(sheepNeighbors,minDistance=1)
+            thisSheep.separation(sheepNeighbors,minDistance=self.minInterSheepDistance)
             # Validate location and velocityt adjusted in previous functions
             thisSheep.validateParams()
             # Update Next Location with by adding the new velocity calculated up to this line.

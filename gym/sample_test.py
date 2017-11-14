@@ -9,4 +9,5 @@ env.reset()
 while 1:
     env.render()
     env.step(env.action_space.sample())
+    #print(env.get_sheep_centroid())
     e.wait(0.2)

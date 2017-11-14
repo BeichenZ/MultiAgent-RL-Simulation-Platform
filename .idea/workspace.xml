@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="21550c0b-7562-49ea-b592-3ebbda8b5c6f" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gym/gym/envs/sheep/SheepGroup.py" afterPath="$PROJECT_DIR$/gym/gym/envs/sheep/SheepGroup.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gym/gym/envs/sheep/sheep_env.py" afterPath="$PROJECT_DIR$/gym/gym/envs/sheep/sheep_env.py" />
     </list>
@@ -14,7 +13,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/MultiAgent_RL_Simulation_Platform$sample_test.coverage" NAME="sample_test Coverage Results" MODIFIED="1510621665151" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gym" />
+    <SUITE FILE_PATH="coverage/MultiAgent_RL_Simulation_Platform$sample_test.coverage" NAME="sample_test Coverage Results" MODIFIED="1510624683772" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/gym" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="450">
@@ -30,21 +29,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="sheep_env.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="sheep_env.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/gym/gym/envs/sheep/sheep_env.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="104">
-              <caret line="14" column="25" lean-forward="false" selection-start-line="14" selection-start-column="25" selection-end-line="14" selection-end-column="25" />
+            <state relative-caret-position="105">
+              <caret line="14" column="26" lean-forward="false" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SheepGroup.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="SheepGroup.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/gym/gym/envs/sheep/SheepGroup.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="611">
-              <caret line="49" column="28" lean-forward="true" selection-start-line="49" selection-start-column="28" selection-end-line="49" selection-end-column="28" />
+            <state relative-caret-position="75">
+              <caret line="5" column="22" lean-forward="false" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
               </folding>
@@ -136,6 +135,7 @@
       <find>MAX_BOID_VELOCITY</find>
       <find>MaxVelocity_def</find>
       <find>distance</find>
+      <find>minDistance</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -150,8 +150,8 @@
         <option value="$PROJECT_DIR$/gym/gym/envs/sheep/BoidSimu.py" />
         <option value="$PROJECT_DIR$/gym/gym/envs/sheep/__init__.py" />
         <option value="$PROJECT_DIR$/gym/sample_test.py" />
-        <option value="$PROJECT_DIR$/gym/gym/envs/sheep/SheepGroup.py" />
         <option value="$PROJECT_DIR$/gym/gym/envs/sheep/sheep_env.py" />
+        <option value="$PROJECT_DIR$/gym/gym/envs/sheep/SheepGroup.py" />
       </list>
     </option>
   </component>
@@ -162,8 +162,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-47" />
-    <option name="y" value="81" />
+    <option name="x" value="1292" />
+    <option name="y" value="-25" />
     <option name="width" value="1280" />
     <option name="height" value="717" />
   </component>
@@ -325,7 +325,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-47" y="81" width="1280" height="717" extended-state="0" />
+    <frame x="1292" y="-25" width="1280" height="717" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.328594" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -360,7 +360,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/gym/gym/envs/sheep/SheepGroup.py</url>
-          <line>85</line>
+          <line>89</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
@@ -726,16 +726,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gym/sample_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Boids-with-obstacles-and-goals-master/experiments/basic.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
@@ -756,21 +746,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gym/gym/envs/sheep/SheepGroup.py">
+    <entry file="file://$PROJECT_DIR$/gym/sample_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="611">
-          <caret line="49" column="28" lean-forward="true" selection-start-line="49" selection-start-column="28" selection-end-line="49" selection-end-column="28" />
+        <state relative-caret-position="165">
+          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
           <folding>
-            <element signature="e#0#12#0" expanded="true" />
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/gym/gym/envs/sheep/sheep_env.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="104">
-          <caret line="14" column="25" lean-forward="false" selection-start-line="14" selection-start-column="25" selection-end-line="14" selection-end-column="25" />
+        <state relative-caret-position="105">
+          <caret line="14" column="26" lean-forward="false" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gym/gym/envs/sheep/SheepGroup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="22" lean-forward="false" selection-start-line="5" selection-start-column="22" selection-end-line="5" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

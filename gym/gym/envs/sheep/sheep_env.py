@@ -7,11 +7,21 @@ from gym.envs.sheep import DogGroup
 from pyglet.window import key
 import pdb
 
+'''
+LEGEND
+grey dot  = sheep
+red dot   = dog
+green dot = target
+blue dot  = sheep center
+'''
+
 class SheepEnv(gym.Env):
   metadata = {'render.modes': ['human']}
   #Env Set-up variable
   SCREEN_WIDTH =1200
   SCREEN_HEIGHT = 700
+  TARGET_X = 900
+  TARGET_Y = 500
   Default_SheepCount = 10
   def __init__(self):
     self.action_space = spaces.Discrete(4)
@@ -30,6 +40,28 @@ class SheepEnv(gym.Env):
 
   def _reset(self):
     return
+
+  def get_sheep_centroid(self):
+    x_sum = 0
+    y_sum = 0
+    for sheep in self.sheepGroup.SheepList:
+      x_sum += sheep.X
+      y_sum += sheep.Y
+    x_average = x_sum/len(self.sheepGroup.SheepList)
+    y_average = y_sum/len(self.sheepGroup.SheepList)
+    return [x_average, y_average]
+
+  # sqrt(sum of squares of distances) / (number of sheep)
+  def get_cluster_dist_from_centroid(self):
+    centroid = self.get_sheep_centroid()
+    sum_of_dist_sqr = 0
+    for sheep in self.sheepGroup.SheepList:
+      sum_of_dist_sqr += (sheep.X - centroid[0])**2 + (sheep.Y - centroid[1])**2
+    return sum_of_dist_sqr/len(self.sheepGroup.SheepList)
+
+  def get_dist_sqr_to_target(self):
+    centroid = self.get_sheep_centroid()
+    return (self.TARGET_X - centroid[0])**2 + (self.TARGET_Y - centroid[1])**2
 
   def key_press(self, symbol, modifier):
       if symbol==key.LEFT: 
@@ -61,6 +93,20 @@ class SheepEnv(gym.Env):
     if self.viewer is None:
         self.viewer = rendering.Viewer(self.SCREEN_WIDTH, self.SCREEN_HEIGHT)
         self.viewer.window.on_key_press = self.key_press
+
+        target_translation = rendering.Transform()
+        target_circ = rendering.make_circle(10)
+        target_circ.set_color(0, 0.7, 0)
+        target_circ.add_attr(target_translation)
+        self.viewer.add_geom(target_circ)
+        target_translation.set_translation(self.TARGET_X, self.TARGET_Y)
+
+        self.centroid_translation = rendering.Transform()
+        centroid_circ = rendering.make_circle(8)
+        centroid_circ.set_color(0, 0, 0.9)
+        centroid_circ.add_attr(self.centroid_translation)
+        self.viewer.add_geom(centroid_circ)
+
         self.sheepTranlations = []
         for sheep in curSheepList:
             translation = rendering.Transform()
@@ -82,6 +128,9 @@ class SheepEnv(gym.Env):
         translation.set_translation(curSheepList[ind].X,curSheepList[ind].Y)
     for ind, translation in enumerate(self.dogTranlations):
         translation.set_translation(curDogList[ind].X, curDogList[ind].Y)
+    
+    centroid_pos = self.get_sheep_centroid()
+    self.centroid_translation.set_translation(centroid_pos[0], centroid_pos[1]) 
 
     return self.viewer.render(return_rgb_array = mode=='rgb_array')
     

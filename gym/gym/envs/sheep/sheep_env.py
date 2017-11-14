@@ -10,14 +10,14 @@ import pdb
 class SheepEnv(gym.Env):
   metadata = {'render.modes': ['human']}
   #Env Set-up variable
-  SCREEN_WIDTH =600
-  SCREEN_HEIGHT = 600
+  SCREEN_WIDTH =1200
+  SCREEN_HEIGHT = 700
   Default_SheepCount = 10
   def __init__(self):
     self.action_space = spaces.Discrete(4)
     self.viewer = None
 
-    self.sheepGroup = SheepGroup.SheepGroup( 10 ,self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
+    self.sheepGroup = SheepGroup.SheepGroup( self.Default_SheepCount ,self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
 
     self.dogGroup = DogGroup.DogGroup(self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
     self.reset()

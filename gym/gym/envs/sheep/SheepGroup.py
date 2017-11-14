@@ -5,8 +5,8 @@ screen_Width = 0
 screen_Height = 0
 
 class SheepGroup():
-    NEIGHBOR_RADIUS = 600
-    
+    NEIGHBOR_RADIUS = 200
+
     def __init__(self,sheepCount,screenWidth,screenHeight):
         self.sheepCount = sheepCount
         self.SheepList = []
@@ -33,7 +33,7 @@ class SheepGroup():
             #TO-DO alignment function
             thisSheep.alignment(sheepNeighbors)
             # TO-DO separation function
-            thisSheep.separation(sheepNeighbors,minDistance=5)
+            thisSheep.separation(sheepNeighbors,minDistance=1)
             # Validate location and velocityt adjusted in previous functions
             thisSheep.validateParams()
             # Update Next Location with by adding the new velocity calculated up to this line.
@@ -43,13 +43,14 @@ class SheepGroup():
 
 
 class SingleSheep():
+    #Note: the contribution is proportional to 1/Weight, larger the weight, smaller the contribution
     cohesionW_def = 10;
-    alignmentW_def = 4;
-    separationW_def = 0.5;
-    ObstacleAvoidW_def = 1;
-    goalW_def = 6;
-    fieldofView_def = 6;
-    MaxVelocity_def = 6;
+    alignmentW_def = 50;
+    separationW_def = 50;
+    ObstacleAvoidW_def = 10;
+    goalW_def = 100;
+    fieldofView_def = 60;
+    MaxVelocity_def = 30;
     #Place-holder for later Image
     sheepImage_def = "/resource/sheep1.png"
 
@@ -172,6 +173,14 @@ class SingleSheep():
             self.velocityY = -self.velocityY
         if self.Y > screen_Height and self.velocityY > 0:
             self.velocityY = -self.velocityY
+
+        #validate within the maximum speed limit and scale down if needed
+        tempVelocity = sqrt(self.velocityX*self.velocityX+self.velocityY*self.velocityY);
+        if tempVelocity>self.MaxVelocity:
+            self.velocityX = self.velocityX/tempVelocity*self.MaxVelocity;
+            self.velocityY = self.velocityY/tempVelocity*self.MaxVelocity;
+
+
         return
 
     def validateAndUpdateLocation(self):

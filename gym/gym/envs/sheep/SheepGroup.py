@@ -9,17 +9,22 @@ class SheepGroup():
     NEIGHBOR_RADIUS = 200
 
 
-    def __init__(self,sheepCount,screenWidth,screenHeight):
+    def __init__(self,sheepCount,DogCount,screenWidth,screenHeight):
         self.sheepCount = sheepCount
+        self.dogCount = DogCount
         global screen_Width
         global screen_Height
         global minDistanceWeight
         self.minInterSheepDistance = self.NEIGHBOR_RADIUS/ minDistanceWeight;
         self.SheepList = []
+        self.DogList = []
         screen_Width=screenWidth
         screen_Height = screenHeight
         for i in range(sheepCount):
             self.SheepList.append(SingleSheep())
+            #Dog and Sheep are mathematically similar in nature. We do not feel a need to have a separate class
+            if i < DogCount:
+                self.DogList.append(SingleSheep())
     def updateLocations(self):
         for thisSheep in self.SheepList:
             sheepNeighbors = []
@@ -29,15 +34,19 @@ class SheepGroup():
                 distance = thisSheep.distanceTo(otherSheep)
                 if distance < self.NEIGHBOR_RADIUS:
                     sheepNeighbors.append(otherSheep)
+            for dog in self.DogList:
+                distance = thisSheep.distanceTo(dog)
+                if distance < thisSheep.fieldofView:
+                    thisSheep.avoidFlag = True;
+
 
             #TO-DO make boids to do random stuff if they do not move
 
-            #TO-DO cohesion function
             thisSheep.cohesion(sheepNeighbors)
-            #TO-DO alignment function
             thisSheep.alignment(sheepNeighbors)
-            # TO-DO separation function
             thisSheep.separation(sheepNeighbors,minDistance=self.minInterSheepDistance)
+            if thisSheep.avoidFlag:
+                thisSheep.flee()
             # Validate location and velocityt adjusted in previous functions
             thisSheep.validateParams()
             # Update Next Location with by adding the new velocity calculated up to this line.
@@ -55,13 +64,14 @@ class SingleSheep():
     goalW_def = 100;
     fieldofView_def = 60;
     MaxVelocity_def = 30;
+    FieldofView_def = 0;
     #Place-holder for later Image
     sheepImage_def = "/resource/sheep1.png"
 
 
     def __init__(self,X=None,Y=None,
                  cohesionW=cohesionW_def,alignmentW = alignmentW_def,separationW = separationW_def,
-                 MaxVelocity = MaxVelocity_def,sheepImage = sheepImage_def):
+                 MaxVelocity = MaxVelocity_def,FieldofView = FieldofView_def,sheepImage = sheepImage_def):
         global screen_Height
         global screen_Width
         self.X = numpy.random.randint(0, screen_Width) if X is None else X
@@ -74,6 +84,8 @@ class SingleSheep():
         self.sheepImagePath = sheepImage;
         self.velocityX = numpy.random.random_integers(0,1000)/100;
         self.velocityY = numpy.random.random_integers(0,1000)/100;
+        self.fieldofView = FieldofView;
+        self.avoidFlag = False;
 
         #Initialize Velocity Randomly
 
@@ -168,6 +180,9 @@ class SingleSheep():
 
         return
 
+    def flee(self):
+        return
+
     def validateParams(self):
         if self.X < 0 and self.velocityX < 0:
             self.velocityX = -self.velocityX
@@ -191,6 +206,7 @@ class SingleSheep():
         self.validateParams()
         self.X = self.X + self.velocityX
         self.Y = self.Y + self.velocityY
+
 
 
 

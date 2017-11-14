@@ -23,11 +23,12 @@ class SheepEnv(gym.Env):
   TARGET_X = 900
   TARGET_Y = 500
   Default_SheepCount = 10
+  Default_DogCount = 2
   def __init__(self):
     self.action_space = spaces.Discrete(4)
     self.viewer = None
 
-    self.sheepGroup = SheepGroup.SheepGroup( self.Default_SheepCount ,self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
+    self.sheepGroup = SheepGroup.SheepGroup( self.Default_SheepCount, self.Default_DogCount,self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
 
     self.dogGroup = DogGroup.DogGroup(self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
     self.reset()

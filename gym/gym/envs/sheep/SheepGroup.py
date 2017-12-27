@@ -1,5 +1,6 @@
 import numpy
 from math import sqrt
+from time import time
 
 screen_Width = 0
 screen_Height = 0
@@ -43,35 +44,45 @@ class SheepGroup():
             else:
                 self.allSheepIdle = True
 
-        #Check if all sheep are within preset radius
-        for thisSheep in self.SheepList:
-            sheepNeighbors = []
-            #Obtain a list of neighboring sheep
-            for otherSheep in self.SheepList:
-                if otherSheep == thisSheep:
-                    continue #skip for itself
-                distance = thisSheep.distanceTo(otherSheep)
-                if distance < self.NEIGHBOR_RADIUS:
-                    sheepNeighbors.append(otherSheep)
+        #Calculate Velocity Change
+
+        if (self.allSheepIdle):
+            seedCounter=0;
+            for sheep in self.SheepList:
+                seedCounter += 1
+                numpy.random.seed(int(time())+seedCounter)
+                sheep.velocityX = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
+                sheep.velocityY = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
+                sheep.validateParams(IdleMode=self.allSheepIdle)
+                sheep.validateAndUpdateLocation()
+        else:
+            #Check if all sheep are within preset radius
+            for thisSheep in self.SheepList:
+                sheepNeighbors = []
+                #Obtain a list of neighboring sheep
+                for otherSheep in self.SheepList:
+                    if otherSheep == thisSheep:
+                        continue #skip for itself
+                    distance = thisSheep.distanceTo(otherSheep)
+                    if distance < self.NEIGHBOR_RADIUS:
+                        sheepNeighbors.append(otherSheep)
 
 
-            for dog in self.DogList:
-                distance = thisSheep.distanceTo(dog)
-                if distance < thisSheep.fieldofView:
-                    thisSheep.avoidFlag = True;
+                for dog in self.DogList:
+                    distance = thisSheep.distanceTo(dog)
+                    if distance < thisSheep.fieldofView:
+                        thisSheep.avoidFlag = True;
 
+                #TO-DO make boids to do random stuff if they do not move
+                thisSheep.cohesion(sheepNeighbors)
+                thisSheep.alignment(sheepNeighbors)
+                thisSheep.separation(sheepNeighbors,minDistance=self.minInterSheepDistance)
+                if thisSheep.avoidFlag:
+                    thisSheep.flee()
 
-            #TO-DO make boids to do random stuff if they do not move
-
-            thisSheep.cohesion(sheepNeighbors)
-            thisSheep.alignment(sheepNeighbors)
-            thisSheep.separation(sheepNeighbors,minDistance=self.minInterSheepDistance)
-            if thisSheep.avoidFlag:
-                thisSheep.flee()
-            # Validate location and velocityt adjusted in previous functions
-            thisSheep.validateParams()
-            # Update Next Location with by adding the new velocity calculated up to this line.
-            thisSheep.validateAndUpdateLocation()
+                # Validate Velocity and Update Location Based on current iteration result
+                thisSheep.validateParams()
+                thisSheep.validateAndUpdateLocation()
 
         return
 
@@ -229,15 +240,24 @@ class SingleSheep():
 
         return
 
-    def validateParams(self):
+    def validateParams(self,IdleMode = False):
+        edgeSpeedModifier = 1
+        nonCollidingModifier = 1
+        if(IdleMode):
+            edgeSpeedModifier = 20
+            nonCollidingModifier = -1
         if self.X < 0 and self.velocityX < 0:
-            self.velocityX = -self.velocityX
+            self.velocityX = -edgeSpeedModifier*self.velocityX
+            self.velocityY = nonCollidingModifier*self.velocityY
         if self.X > screen_Width and self.velocityX > 0:
-            self.velocityX = -self.velocityX
+            self.velocityX = -edgeSpeedModifier*self.velocityX
+            self.velocityY = nonCollidingModifier*self.velocityY
         if self.Y < 0 and self.velocityY < 0:
-            self.velocityY = -self.velocityY
+            self.velocityY = -edgeSpeedModifier*self.velocityY
+            self.velocityX = nonCollidingModifier*self.velocityX
         if self.Y > screen_Height and self.velocityY > 0:
-            self.velocityY = -self.velocityY
+            self.velocityY = -edgeSpeedModifier*self.velocityY
+            self.velocityX = nonCollidingModifier*self.velocityX
 
         #validate within the maximum speed limit and scale down if needed
         tempVelocity = sqrt(self.velocityX*self.velocityX+self.velocityY*self.velocityY);

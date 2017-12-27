@@ -10,4 +10,4 @@ while 1:
     env.render()
     env.step(env.action_space.sample())
     #print(env.get_sheep_centroid())
-    e.wait(0.02)
+    e.wait(0.005)

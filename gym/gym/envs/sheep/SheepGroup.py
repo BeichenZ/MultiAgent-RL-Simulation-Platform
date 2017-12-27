@@ -7,7 +7,7 @@ minDistanceWeight = 20
 
 class SheepGroup():
     NEIGHBOR_RADIUS = 200
-
+    IDLE_RADIUS = 60
 
     def __init__(self,sheepCount,DogCount,screenWidth,screenHeight):
         self.sheepCount = sheepCount
@@ -21,16 +21,29 @@ class SheepGroup():
         self.SheepList = []
         self.DogList = []
         self.centroid = [screen_Width/2,screen_Height/2]
+        self.dogDrivenFlag = False
+        self.allSheepIdle = False
         for i in range(sheepCount):
             self.SheepList.append(SingleSheep())
             #Dog and Sheep are mathematically similar in nature. We do not feel a need to have a separate class
             if i < DogCount:
                 self.DogList.append(SingleSheep())
+
+    def cleanPreviousState(self):
+        self.allSheepIdle = False
+        self.dogDrivenFlag = False
+
     def updateLocations(self):
         #Assumption:All sheeps tend to form one single flocking ultimately
+        #Set Flags influencing all sheeps
+        self.centroid = self.get_sheep_centroid()
+        if(self.all_sheep_in_Radius(self.centroid, self.IDLE_RADIUS)):
+            if(self.dog_insight_of_anySheep()):
+                self.dogDrivenFlag = True
+            else:
+                self.allSheepIdle = True
 
         #Check if all sheep are within preset radius
-        self.centroid = self.get_sheep_centroid()
         for thisSheep in self.SheepList:
             sheepNeighbors = []
             #Obtain a list of neighboring sheep
@@ -71,6 +84,20 @@ class SheepGroup():
         x_average = x_sum / len(self.SheepList)
         y_average = y_sum / len(self.SheepList)
         return [x_average, y_average]
+
+    def all_sheep_in_Radius(self, centroid, radius):
+        for sheep in self.SheepList:
+            if (sqrt((centroid[0] - sheep.X) ** 2 + (centroid[1] - sheep.Y) ** 2) > radius):
+                return False
+        return True
+
+    def dog_insight_of_anySheep(self):
+        for sheep in self.SheepList:
+            for dog in self.DogList:
+                if(sheep.distanceTo(dog) < sheep.fieldofView):
+                    return True
+        return False
+
 
 
 class SingleSheep():

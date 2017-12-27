@@ -36,6 +36,7 @@ class SheepEnv(gym.Env):
 
   def _step(self, action=None):
     #TO-Do: Implementi Action for Shepherd
+    self.sheepGroup.cleanPreviousState()
     self.sheepGroup.updateLocations()
     return
 

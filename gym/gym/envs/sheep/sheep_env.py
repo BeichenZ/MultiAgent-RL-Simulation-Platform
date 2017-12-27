@@ -42,26 +42,16 @@ class SheepEnv(gym.Env):
   def _reset(self):
     return
 
-  def get_sheep_centroid(self):
-    x_sum = 0
-    y_sum = 0
-    for sheep in self.sheepGroup.SheepList:
-      x_sum += sheep.X
-      y_sum += sheep.Y
-    x_average = x_sum/len(self.sheepGroup.SheepList)
-    y_average = y_sum/len(self.sheepGroup.SheepList)
-    return [x_average, y_average]
-
   # sqrt(sum of squares of distances) / (number of sheep)
   def get_cluster_dist_from_centroid(self):
-    centroid = self.get_sheep_centroid()
+    centroid = self.sheepGroup.get_sheep_centroid()
     sum_of_dist_sqr = 0
     for sheep in self.sheepGroup.SheepList:
       sum_of_dist_sqr += (sheep.X - centroid[0])**2 + (sheep.Y - centroid[1])**2
     return sum_of_dist_sqr/len(self.sheepGroup.SheepList)
 
   def get_dist_sqr_to_target(self):
-    centroid = self.get_sheep_centroid()
+    centroid = self.sheepGroup.get_sheep_centroid()
     return (self.TARGET_X - centroid[0])**2 + (self.TARGET_Y - centroid[1])**2
 
   def key_press(self, symbol, modifier):
@@ -130,7 +120,7 @@ class SheepEnv(gym.Env):
     for ind, translation in enumerate(self.dogTranlations):
         translation.set_translation(curDogList[ind].X, curDogList[ind].Y)
     
-    centroid_pos = self.get_sheep_centroid()
+    centroid_pos = self.sheepGroup.get_sheep_centroid()
     self.centroid_translation.set_translation(centroid_pos[0], centroid_pos[1]) 
 
     return self.viewer.render(return_rgb_array = mode=='rgb_array')

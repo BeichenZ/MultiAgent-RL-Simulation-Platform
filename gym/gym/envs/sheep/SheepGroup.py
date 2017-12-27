@@ -15,25 +15,33 @@ class SheepGroup():
         global screen_Width
         global screen_Height
         global minDistanceWeight
+        screen_Width = screenWidth
+        screen_Height = screenHeight
         self.minInterSheepDistance = self.NEIGHBOR_RADIUS/ minDistanceWeight;
         self.SheepList = []
         self.DogList = []
-        screen_Width=screenWidth
-        screen_Height = screenHeight
+        self.centroid = [screen_Width/2,screen_Height/2]
         for i in range(sheepCount):
             self.SheepList.append(SingleSheep())
             #Dog and Sheep are mathematically similar in nature. We do not feel a need to have a separate class
             if i < DogCount:
                 self.DogList.append(SingleSheep())
     def updateLocations(self):
+        #Assumption:All sheeps tend to form one single flocking ultimately
+
+        #Check if all sheep are within preset radius
+        self.centroid = self.get_sheep_centroid()
         for thisSheep in self.SheepList:
             sheepNeighbors = []
+            #Obtain a list of neighboring sheep
             for otherSheep in self.SheepList:
                 if otherSheep == thisSheep:
                     continue #skip for itself
                 distance = thisSheep.distanceTo(otherSheep)
                 if distance < self.NEIGHBOR_RADIUS:
                     sheepNeighbors.append(otherSheep)
+
+
             for dog in self.DogList:
                 distance = thisSheep.distanceTo(dog)
                 if distance < thisSheep.fieldofView:
@@ -53,6 +61,16 @@ class SheepGroup():
             thisSheep.validateAndUpdateLocation()
 
         return
+
+    def get_sheep_centroid(self):
+        x_sum = 0
+        y_sum = 0
+        for sheep in self.SheepList:
+            x_sum += sheep.X
+            y_sum += sheep.Y
+        x_average = x_sum / len(self.SheepList)
+        y_average = y_sum / len(self.SheepList)
+        return [x_average, y_average]
 
 
 class SingleSheep():
@@ -181,6 +199,7 @@ class SingleSheep():
         return
 
     def flee(self):
+
         return
 
     def validateParams(self):

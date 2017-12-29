@@ -28,7 +28,7 @@ class SheepGroup():
             self.SheepList.append(SingleSheep())
             #Dog and Sheep are mathematically similar in nature. We do not feel a need to have a separate class
             if i < DogCount:
-                self.DogList.append(SingleSheep())
+                self.DogList.append(SingleDog())
 
     def cleanPreviousState(self):
         self.allSheepIdle = False
@@ -69,16 +69,18 @@ class SheepGroup():
 
 
                 for dog in self.DogList:
+                    closeDogs = []
                     distance = thisSheep.distanceTo(dog)
                     if distance < thisSheep.fieldofView:
-                        thisSheep.avoidFlag = True;
+                        thisSheep.avoidFlag = True
+                        closeDogs.append(dog)
 
                 #TO-DO make boids to do random stuff if they do not move
                 thisSheep.cohesion(sheepNeighbors)
                 thisSheep.alignment(sheepNeighbors)
                 thisSheep.separation(sheepNeighbors,minDistance=self.minInterSheepDistance)
                 if thisSheep.avoidFlag:
-                    thisSheep.flee()
+                    thisSheep.flee(closeDogs)
 
                 # Validate Velocity and Update Location Based on current iteration result
                 thisSheep.validateParams()
@@ -115,18 +117,17 @@ class SingleSheep():
     #Note: the contribution is proportional to 1/Weight, larger the weight, smaller the contribution
     cohesionW_def = 10;
     alignmentW_def = 50;
-    separationW_def = 50;
-    ObstacleAvoidW_def = 10;
+    separationW_def = 10;
+    dog_avoidanceW_def = 10;
     goalW_def = 100;
-    fieldofView_def = 60;
     MaxVelocity_def = 30;
-    FieldofView_def = 0;
+    FieldofView_def = 180;
     #Place-holder for later Image
     sheepImage_def = "/resource/sheep1.png"
 
 
     def __init__(self,X=None,Y=None,
-                 cohesionW=cohesionW_def,alignmentW = alignmentW_def,separationW = separationW_def,
+                 cohesionW=cohesionW_def,alignmentW = alignmentW_def,separationW = separationW_def,dog_avoidanceW = dog_avoidanceW_def,
                  MaxVelocity = MaxVelocity_def,FieldofView = FieldofView_def,sheepImage = sheepImage_def):
         global screen_Height
         global screen_Width
@@ -136,6 +137,7 @@ class SingleSheep():
         self.cohesionW = cohesionW;
         self.alignmentW = alignmentW;
         self.separationW = separationW;
+        self.dog_avoidanceW = dog_avoidanceW;
         self.MaxVelocity = MaxVelocity;
         self.sheepImagePath = sheepImage;
         self.velocityX = numpy.random.random_integers(0,1000)/100;
@@ -236,8 +238,10 @@ class SingleSheep():
 
         return
 
-    def flee(self):
-
+    def flee(self,closeDogsList):
+        for dog in closeDogsList:
+            self.velocityX += -(dog.X + self.X)/self.dog_avoidanceW
+            self.velocityY += -(dog.Y + self.Y) / self.dog_avoidanceW
         return
 
     def validateParams(self,IdleMode = False):
@@ -273,6 +277,6 @@ class SingleSheep():
         self.X = self.X + self.velocityX
         self.Y = self.Y + self.velocityY
 
-
-
+class SingleDog(SingleSheep):
+    pass
 

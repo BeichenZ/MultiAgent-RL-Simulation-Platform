@@ -22,15 +22,15 @@ class SheepEnv(gym.Env):
   SCREEN_HEIGHT = 700
   TARGET_X = 900
   TARGET_Y = 500
-  Default_SheepCount = 10
+  Default_SheepCount = 30
   Default_DogCount = 2
   def __init__(self):
     self.action_space = spaces.Discrete(4)
     self.viewer = None
 
     self.sheepGroup = SheepGroup.SheepGroup( self.Default_SheepCount, self.Default_DogCount,self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
-
-    self.dogGroup = DogGroup.DogGroup(self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
+    #Now, the list of dogs technically belongs to sheepGroup
+    self.dogGroup = self.sheepGroup
     self.reset()
     return
 
@@ -56,22 +56,31 @@ class SheepEnv(gym.Env):
     return (self.TARGET_X - centroid[0])**2 + (self.TARGET_Y - centroid[1])**2
 
   def key_press(self, symbol, modifier):
+      key_moveSize = 30
       if symbol==key.LEFT: 
-        self.dogGroup.DogList[0].X -= 10
+        self.dogGroup.DogList[0].X -= key_moveSize
+        self.dogGroup.DogList[0].velocityX = -key_moveSize
       if symbol==key.RIGHT: 
-        self.dogGroup.DogList[0].X += 10
+        self.dogGroup.DogList[0].X += key_moveSize
+        self.dogGroup.DogList[0].velocityX = key_moveSize
       if symbol==key.UP: 
-        self.dogGroup.DogList[0].Y += 10
+        self.dogGroup.DogList[0].Y += key_moveSize
+        self.dogGroup.DogList[0].velocityY = key_moveSize
       if symbol==key.DOWN: 
-        self.dogGroup.DogList[0].Y -= 10
+        self.dogGroup.DogList[0].Y -= key_moveSize
+        self.dogGroup.DogList[0].velocityY = -key_moveSize
       if symbol==key.A: 
-        self.dogGroup.DogList[1].X -= 10
+        self.dogGroup.DogList[1].X -= key_moveSize
+        self.dogGroup.DogList[0].velocityX = -key_moveSize
       if symbol==key.D: 
-        self.dogGroup.DogList[1].X += 10
+        self.dogGroup.DogList[1].X += key_moveSize
+        self.dogGroup.DogList[0].velocityX = key_moveSize
       if symbol==key.W: 
-        self.dogGroup.DogList[1].Y += 10
+        self.dogGroup.DogList[1].Y += key_moveSize
+        self.dogGroup.DogList[0].velocityY = key_moveSize
       if symbol==key.S: 
-        self.dogGroup.DogList[1].Y -= 10
+        self.dogGroup.DogList[1].Y -= key_moveSize
+        self.dogGroup.DogList[0].velocityY = -key_moveSize
 
   def _render(self, mode='human', close=False):
     if close:

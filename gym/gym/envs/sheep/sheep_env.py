@@ -6,6 +6,7 @@ from gym.envs.sheep import SheepGroup
 from gym.envs.sheep import DogGroup
 from pyglet.window import key
 import pdb
+import numpy as np
 
 '''
 LEGEND
@@ -22,6 +23,7 @@ class SheepEnv(gym.Env):
   SCREEN_HEIGHT = 700
   TARGET_X = 900
   TARGET_Y = 500
+  FINISH_RADIUS = 30
   Default_SheepCount = 30
   Default_DogCount = 2
   def __init__(self):
@@ -34,11 +36,22 @@ class SheepEnv(gym.Env):
     self.reset()
     return
 
+  def if_done(self):
+      if(self.get_dist_sqr_to_target() <= self.FINISH_RADIUS*self.FINISH_RADIUS):
+          return True
+      return False
+  def get_reward(self):
+      #start with sparse award for experiements
+      if(self.if_done()):
+          return 1
+      else:
+          return -1
   def _step(self, action=None):
     #TO-Do: Implementi Action for Shepherd
     self.sheepGroup.cleanPreviousState()
     self.sheepGroup.updateLocations()
-    return
+    #observation consists on distance of centroid to target and average distance of sheeps to centroid
+    return np.array([self.get_dist_sqr_to_target(),self.get_cluster_dist_from_centroid()]),self.get_reward(),self.if_done(),{}
 
   def _reset(self):
     return

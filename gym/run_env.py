@@ -1,0 +1,72 @@
+"""
+Found this from morvan's website, to be modified for our environment
+Using:
+Tensorflow: 1.0
+gym: 0.7.3
+"""
+
+
+import gym
+from RL_brain import DeepQNetwork
+
+env = gym.make('sheep-v0')
+env = env.unwrapped
+
+print(env.action_space)
+print(env.observation_space)
+
+
+RL = DeepQNetwork(n_actions=env.action_space.n,
+                  n_features=env.observation_space.shape[0],
+                  learning_rate=0.01, e_greedy=0.9,
+                  replace_target_iter=100, memory_size=2000,
+                  e_greedy_increment=0.001,)
+
+total_steps = 0
+REWARD_DISTANCE = 20
+REWARD_RADIUS= 10
+
+
+
+for i_episode in range(100):
+
+    observation = env._reset()
+    ep_r = 0
+    while True:
+        env.render()
+        print(observation)
+        action = RL.choose_action(observation)
+
+        observation_, reward, done,info = env.step(action)
+
+        # CHANGE THE OBSERVATION FROM THE ENVIRONMENT
+        DogX,DogY,distance_to_sheep_centroid,distance_to_target, ave_distance_to_centroid = observation_
+
+
+
+        # when the com is within a radius to the final destination there is a reward to the dog
+        if (distance_to_target <= REWARD_DISTANCE and ave_distance_to_centroid <= REWARD_RADIUS):
+            r1 = REWARD_DISTANCE - distance_to_target
+            r2 = REWARD_RADIUS - ave_distance_to_centroid
+            reward = r1*r2
+        elif (distance_to_target <= REWARD_DISTANCE):
+            reward = 1/2*(REWARD_DISTANCE - distance_to_target)
+        elif (ave_distance_to_centroid <= REWARD_RADIUS):
+            reward = 1/2*(REWARD_RADIUS - ave_distance_to_centroid)
+
+        RL.store_transition(observation, action, reward, observation_)
+
+        ep_r += reward
+        if total_steps > 1000:
+            RL.learn()
+
+        if done:
+            print('episode: ', i_episode,
+                  'ep_r: ', round(ep_r, 2),
+                  ' epsilon: ', round(RL.epsilon, 2))
+            break
+
+        observation = observation_
+        total_steps += 1
+
+RL.plot_cost()

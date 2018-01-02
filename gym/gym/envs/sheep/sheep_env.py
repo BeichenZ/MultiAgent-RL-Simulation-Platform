@@ -25,7 +25,7 @@ class SheepEnv(gym.Env):
   TARGET_Y = 500
   FINISH_RADIUS = 30
   Default_SheepCount = 30
-  Default_DogCount = 2
+  Default_DogCount = 1
   def __init__(self):
     self.action_space = spaces.Discrete(4)
     self.viewer = None
@@ -33,7 +33,12 @@ class SheepEnv(gym.Env):
     self.sheepGroup = SheepGroup.SheepGroup( self.Default_SheepCount, self.Default_DogCount,self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
     #Now, the list of dogs technically belongs to sheepGroup
     self.dogGroup = self.sheepGroup
-    self.reset()
+    #self._reset()
+
+    # Need to figure out the high for our case
+    high = np.array([np.inf] * 5)
+    self.observation_space = spaces.Box(-high, high)
+    self._seed()
     return
 
   def if_done(self):
@@ -43,7 +48,7 @@ class SheepEnv(gym.Env):
   def get_reward(self):
       #start with sparse award for experiements
       if(self.if_done()):
-          return 1
+          return 100
       else:
           return -1
   def _step(self, action=None):
@@ -51,17 +56,29 @@ class SheepEnv(gym.Env):
     self.sheepGroup.cleanPreviousState()
     self.sheepGroup.updateLocations()
     #observation consists on distance of centroid to target and average distance of sheeps to centroid
-    return np.array([self.get_dist_sqr_to_target(),self.get_cluster_dist_from_centroid()]),self.get_reward(),self.if_done(),{}
+    #assume one dog situation
+    allDogLocations=self.sheepGroup.get_DogsLocation()
+    dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
+    return [allDogLocations[0][0],allDogLocations[0][1],dog_to_sheep_centroid,self.get_dist_sqr_to_target(),self.get_cluster_dist_from_centroid()],self.get_reward(),self.if_done(),{}
+  def _seed(self, seed=None):
+      self.np_random, seed = seeding.np_random(seed)
+      return [seed]
 
   def _reset(self):
-    return
+      #Need to be changed later
+      self.state = self.np_random.uniform(low=10, high=100, size=(5,))
+      return self.state
+
+  def get_firstDogToSheepCentroidDist(self):
+      centroid = self.sheepGroup.get_sheep_centroid()
+      return np.sqrt((self.sheepGroup.DogList[0].X-self.sheepGroup.centroid[0])**2+(self.sheepGroup.DogList[0].Y-self.sheepGroup.centroid[1])**2)
 
   # sqrt(sum of squares of distances) / (number of sheep)
   def get_cluster_dist_from_centroid(self):
     centroid = self.sheepGroup.get_sheep_centroid()
     sum_of_dist_sqr = 0
     for sheep in self.sheepGroup.SheepList:
-      sum_of_dist_sqr += (sheep.X - centroid[0])**2 + (sheep.Y - centroid[1])**2
+      sum_of_dist_sqr += np.sqrt((sheep.X - centroid[0])**2 + (sheep.Y - centroid[1])**2)
     return sum_of_dist_sqr/len(self.sheepGroup.SheepList)
 
   def get_dist_sqr_to_target(self):

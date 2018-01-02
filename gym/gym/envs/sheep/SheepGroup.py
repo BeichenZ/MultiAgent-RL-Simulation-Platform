@@ -28,7 +28,7 @@ class SheepGroup():
             self.SheepList.append(SingleSheep())
             #Dog and Sheep are mathematically similar in nature. We do not feel a need to have a separate class
             if i < DogCount:
-                self.DogList.append(SingleDog())
+                self.DogList.append(SingleSheep())
 
     def cleanPreviousState(self):
         self.allSheepIdle = False
@@ -98,6 +98,11 @@ class SheepGroup():
         y_average = y_sum / len(self.SheepList)
         return [x_average, y_average]
 
+    def get_DogsLocation(self):
+        doglocationList = []
+        for dog in self.DogList:
+            doglocationList.append([dog.X,dog.Y])
+        return doglocationList
     def all_sheep_in_Radius(self, centroid, radius):
         for sheep in self.SheepList:
             if (sqrt((centroid[0] - sheep.X) ** 2 + (centroid[1] - sheep.Y) ** 2) > radius):

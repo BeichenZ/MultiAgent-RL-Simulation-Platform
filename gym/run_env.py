@@ -7,6 +7,7 @@ gym: 0.7.3
 
 
 import gym
+import numpy as np
 from RL_brain import DeepQNetwork
 
 env = gym.make('sheep-v0')
@@ -31,6 +32,7 @@ REWARD_RADIUS= 10
 for i_episode in range(100):
 
     observation = env._reset()
+    observation = np.asarray(observation)
     ep_r = 0
     while True:
         env.render()
@@ -66,7 +68,7 @@ for i_episode in range(100):
                   ' epsilon: ', round(RL.epsilon, 2))
             break
 
-        observation = observation_
+        observation = np.asarray(observation_)
         total_steps += 1
 
 RL.plot_cost()

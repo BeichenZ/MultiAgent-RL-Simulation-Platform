@@ -111,7 +111,7 @@ class DeepQNetwork:
 
     def choose_action(self, observation):
         # to have batch dimension when feed into tf placeholder
-        pdb.set_trace()
+        #pdb.set_trace()
         observation = observation[np.newaxis, :]
 
         if np.random.uniform() < self.epsilon:

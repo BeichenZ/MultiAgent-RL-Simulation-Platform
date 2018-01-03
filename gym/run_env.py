@@ -8,6 +8,7 @@ gym: 0.7.3
 
 import gym
 import numpy as np
+import time
 from RL_brain import DeepQNetwork
 
 env = gym.make('sheep-v0')
@@ -29,8 +30,9 @@ REWARD_RADIUS= 50
 
 
 
-for i_episode in range(100):
+for i_episode in range(1000):
 
+    #reset is not correctly working
     observation = env._reset()
     observation = np.asarray(observation)
     ep_r = 0
@@ -47,7 +49,6 @@ for i_episode in range(100):
 
 
         # when the com is within a radius to the final destination there is a reward to the dog
-        print('distance to target = ', distance_to_target)
         if (distance_to_target <= REWARD_DISTANCE and ave_distance_to_centroid <= REWARD_RADIUS):
 
             r1 = 1/distance_to_target
@@ -67,6 +68,7 @@ for i_episode in range(100):
             print('episode: ', i_episode,
                   'ep_r: ', round(ep_r, 2),
                   ' epsilon: ', round(RL.epsilon, 2))
+            time.sleep(3)
             break
 
         observation = np.asarray(observation_)

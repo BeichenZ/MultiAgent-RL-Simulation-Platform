@@ -7,6 +7,7 @@ from gym.envs.sheep import DogGroup
 from pyglet.window import key
 import pdb
 import numpy as np
+import time
 
 '''
 LEGEND
@@ -23,11 +24,13 @@ class SheepEnv(gym.Env):
   SCREEN_HEIGHT = 700
   TARGET_X = 900
   TARGET_Y = 500
-  FINISH_RADIUS = 30
+  #finishing radius can be changed later
+  FINISH_RADIUS = 100
   Default_SheepCount = 30
   Default_DogCount = 1
   DISCRETE_Action_Count = 4 #Number of action when discrete number of action spaces is used
   def __init__(self):
+    np.random.seed(int(time.time()))
     self.action_space = spaces.Discrete(self.DISCRETE_Action_Count)
     self.viewer = None
 
@@ -71,9 +74,23 @@ class SheepEnv(gym.Env):
       return [seed]
 
   def _reset(self):
-      #Need to be changed later
-      self.state = self.np_random.uniform(low=10, high=100, size=(5,))
-      return self.state
+      # Need to be changed later
+      if (self.sheepGroup.SheepList is not None):
+          for sheep in self.sheepGroup.SheepList:
+              sheep.X = np.random.randint(0, self.SCREEN_WIDTH)
+              sheep.Y = np.random.randint(0, self.SCREEN_HEIGHT)
+              sheep.velocityX = np.random.random_integers(0, 1000) / 500
+              sheep.velocityY = np.random.random_integers(0, 1000) / 500
+      if (self.sheepGroup.DogList is not None):
+          for dog in self.sheepGroup.DogList:
+              dog.X = np.random.randint(0, self.SCREEN_WIDTH)
+              dog.Y = sheep.Y = np.random.randint(0, self.SCREEN_HEIGHT)
+              dog.velocityX = np.random.random_integers(0, 1000) / 500
+              dog.velocityY = np.random.random_integers(0, 1000) / 500
+      allDogLocations = self.sheepGroup.get_DogsLocation()
+      dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
+      return [allDogLocations[0][0], allDogLocations[0][1], dog_to_sheep_centroid, self.get_dist_sqr_to_target(),
+              self.get_cluster_dist_from_centroid()]
 
   def get_firstDogToSheepCentroidDist(self):
       centroid = self.sheepGroup.get_sheep_centroid()

@@ -51,8 +51,12 @@ class SheepGroup():
             for sheep in self.SheepList:
                 seedCounter += 1
                 numpy.random.seed(int(time())+seedCounter)
-                sheep.velocityX = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
-                sheep.velocityY = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
+                #sheep.velocityX = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
+                #sheep.velocityY = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
+                if(sheep.velocityX > sheep.MaxVelocity/10):
+                    sheep.velocityX = sheep.velocityX/2
+                if(sheep.velocityY > sheep.MaxVelocity/10):
+                    sheep.velocityY = sheep.velocityY/2
                 sheep.validateParams(IdleMode=self.allSheepIdle)
                 sheep.UpdateLocation()
         else:
@@ -263,16 +267,16 @@ class SingleSheep():
 
     def flee(self,closeDogsList):
         for dog in closeDogsList:
-            self.velocityX += -(dog.X + self.X)/self.dog_avoidanceW
-            self.velocityY += -(dog.Y + self.Y) / self.dog_avoidanceW
+            self.velocityX += (self.X-dog.X)/self.dog_avoidanceW
+            self.velocityY += (self.Y - dog.Y) / self.dog_avoidanceW
         return
 
     def validateParams(self,IdleMode = False,isSheep=True):
         edgeSpeedModifier = 1
         nonCollidingModifier = 1
         if(IdleMode):
-            edgeSpeedModifier = 20
-            nonCollidingModifier = -1
+            edgeSpeedModifier = 2
+            nonCollidingModifier = 1
         if self.X < 0 and self.velocityX < 0:
             self.velocityX = -edgeSpeedModifier*self.velocityX
             self.velocityY = nonCollidingModifier*self.velocityY

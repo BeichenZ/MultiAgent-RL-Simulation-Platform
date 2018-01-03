@@ -26,6 +26,7 @@ class SheepEnv(gym.Env):
   TARGET_Y = 500
   #finishing radius can be changed later
   FINISH_RADIUS = 100
+  SHEEP_RADIUS = 50
   Default_SheepCount = 30
   Default_DogCount = 1
   DISCRETE_Action_Count = 4 #Number of action when discrete number of action spaces is used
@@ -40,13 +41,14 @@ class SheepEnv(gym.Env):
     #self._reset()
 
     # Need to figure out the high for our case
-    high = np.array([np.inf] * 5)
+    high = np.array([np.inf] * 6)
     self.observation_space = spaces.Box(-high, high)
     self._seed()
     return
 
   def if_done(self):
-      if(self.get_dist_sqr_to_target() <= self.FINISH_RADIUS*self.FINISH_RADIUS):
+      #when it done we need to make sure the average radius of the herd is smaller than a fixed radius
+      if(self.get_dist_sqr_to_target() <= self.FINISH_RADIUS*self.FINISH_RADIUS) and (self.get_cluster_dist_from_centroid()<= self.SHEEP_RADIUS):
           return True
       return False
   def get_reward(self):
@@ -68,7 +70,9 @@ class SheepEnv(gym.Env):
     #assume one dog situation
     allDogLocations=self.sheepGroup.get_DogsLocation()
     dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
-    return [allDogLocations[0][0],allDogLocations[0][1],dog_to_sheep_centroid,self.get_dist_sqr_to_target(),self.get_cluster_dist_from_centroid()],self.get_reward(),self.if_done(),{}
+    #assume the dog can see the centroid location of the sheep
+    SheepCentroid = self.sheepGroup.get_sheep_centroid()
+    return [allDogLocations[0][0],allDogLocations[0][1],SheepCentroid[0],SheepCentroid[1],dog_to_sheep_centroid,self.get_dist_sqr_to_target(),self.get_cluster_dist_from_centroid()],self.get_reward(),self.if_done(),{}
   def _seed(self, seed=None):
       self.np_random, seed = seeding.np_random(seed)
       return [seed]
@@ -89,7 +93,8 @@ class SheepEnv(gym.Env):
               dog.velocityY = np.random.random_integers(0, 1000) / 500
       allDogLocations = self.sheepGroup.get_DogsLocation()
       dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
-      return [allDogLocations[0][0], allDogLocations[0][1], dog_to_sheep_centroid, self.get_dist_sqr_to_target(),
+      SheepCentroid = self.sheepGroup.get_sheep_centroid()
+      return [allDogLocations[0][0], allDogLocations[0][1], SheepCentroid[0], SheepCentroid[1], dog_to_sheep_centroid, self.get_dist_sqr_to_target(),
               self.get_cluster_dist_from_centroid()]
 
   def get_firstDogToSheepCentroidDist(self):

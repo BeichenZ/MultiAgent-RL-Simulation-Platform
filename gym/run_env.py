@@ -25,7 +25,7 @@ RL = DeepQNetwork(n_actions=env.DISCRETE_Action_Count,
                   e_greedy_increment=0.001,)
 
 total_steps = 0
-REWARD_DISTANCE = 1000000
+REWARD_DISTANCE = 100000
 REWARD_RADIUS= 50
 
 
@@ -44,7 +44,8 @@ for i_episode in range(1000):
         observation_, reward, done,info = env.step(action=action)
 
         # CHANGE THE OBSERVATION FROM THE ENVIRONMENT
-        DogX,DogY,distance_to_sheep_centroid,distance_to_target, ave_distance_to_centroid = observation_
+        # Add the sheep's centroid
+        DogX,DogY,SheepCOMX,SheepCOMY,distance_to_sheep_centroid,distance_to_target, ave_distance_to_centroid = observation_
 
 
 

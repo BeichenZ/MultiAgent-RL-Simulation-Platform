@@ -46,7 +46,7 @@ class DeepQNetwork:
         self.learn_step_counter = 0
 
         # initialize zero memory [s, a, r, s_]
-        self.memory = np.zeros((self.memory_size, n_features*2+4))
+        self.memory = np.zeros((self.memory_size, n_features*2+2))
 
         # consist of [target_net, evaluate_net]
         self._build_net()

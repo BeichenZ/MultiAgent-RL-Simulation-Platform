@@ -30,6 +30,7 @@ class SheepEnv(gym.Env):
   Default_SheepCount = 30
   Default_DogCount = 1
   DISCRETE_Action_Count = 4 #Number of action when discrete number of action spaces is used
+  FEATURE_Count = 7
   def __init__(self):
     np.random.seed(int(time.time()))
     self.action_space = spaces.Discrete(self.DISCRETE_Action_Count)

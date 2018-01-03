@@ -54,7 +54,7 @@ class SheepGroup():
                 sheep.velocityX = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
                 sheep.velocityY = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
                 sheep.validateParams(IdleMode=self.allSheepIdle)
-                sheep.validateAndUpdateLocation()
+                sheep.UpdateLocation()
         else:
             #Check if all sheep are within preset radius
             for thisSheep in self.SheepList:
@@ -84,7 +84,25 @@ class SheepGroup():
 
                 # Validate Velocity and Update Location Based on current iteration result
                 thisSheep.validateParams()
-                thisSheep.validateAndUpdateLocation()
+                thisSheep.UpdateLocation()
+
+        return
+
+    def executeDogAction(self,action):
+        #Single Dog
+        #For 4-Actions Space: up, down,left,right
+        ConstantSpeed = 30
+        if(action == 0):#Up
+            self.DogList[0].velocityY = ConstantSpeed
+        elif(action == 1): #Down
+            self.DogList[0].velocityY = -ConstantSpeed
+        elif(action == 2):#Left
+            self.DogList[0].velocityX = -ConstantSpeed
+        elif(action ==3 ):#Right
+            self.DogList[0].velocityX = ConstantSpeed
+        self.DogList[0].validateParams()
+        self.DogList[0].UpdateLocation()
+        
 
         return
 
@@ -249,7 +267,7 @@ class SingleSheep():
             self.velocityY += -(dog.Y + self.Y) / self.dog_avoidanceW
         return
 
-    def validateParams(self,IdleMode = False):
+    def validateParams(self,IdleMode = False,isSheep=True):
         edgeSpeedModifier = 1
         nonCollidingModifier = 1
         if(IdleMode):
@@ -277,11 +295,11 @@ class SingleSheep():
 
         return
 
-    def validateAndUpdateLocation(self):
-        self.validateParams()
+    def UpdateLocation(self):
         self.X = self.X + self.velocityX
         self.Y = self.Y + self.velocityY
-
+        
+        return
 class SingleDog(SingleSheep):
     pass
 

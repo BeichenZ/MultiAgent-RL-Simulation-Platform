@@ -17,15 +17,15 @@ print(env.action_space)
 print(env.observation_space)
 
 
-RL = DeepQNetwork(n_actions=env.action_space.n,
+RL = DeepQNetwork(n_actions=env.DISCRETE_Action_Count,
                   n_features=env.observation_space.shape[0],
                   learning_rate=0.01, e_greedy=0.9,
                   replace_target_iter=100, memory_size=2000,
                   e_greedy_increment=0.001,)
 
 total_steps = 0
-REWARD_DISTANCE = 20
-REWARD_RADIUS= 10
+REWARD_DISTANCE = 1000000
+REWARD_RADIUS= 50
 
 
 
@@ -39,7 +39,7 @@ for i_episode in range(100):
         print(observation)
         action = RL.choose_action(observation)
 
-        observation_, reward, done,info = env.step(action)
+        observation_, reward, done,info = env.step(action=action)
 
         # CHANGE THE OBSERVATION FROM THE ENVIRONMENT
         DogX,DogY,distance_to_sheep_centroid,distance_to_target, ave_distance_to_centroid = observation_
@@ -47,18 +47,19 @@ for i_episode in range(100):
 
 
         # when the com is within a radius to the final destination there is a reward to the dog
+        print('distance to target = ', distance_to_target)
         if (distance_to_target <= REWARD_DISTANCE and ave_distance_to_centroid <= REWARD_RADIUS):
-            r1 = REWARD_DISTANCE - distance_to_target
-            r2 = REWARD_RADIUS - ave_distance_to_centroid
-            reward = r1*r2
+
+            r1 = 1/distance_to_target
+            r2 = 1/ave_distance_to_centroid
+            reward = r1+r2
         elif (distance_to_target <= REWARD_DISTANCE):
-            reward = 1/2*(REWARD_DISTANCE - distance_to_target)
-        elif (ave_distance_to_centroid <= REWARD_RADIUS):
-            reward = 1/2*(REWARD_RADIUS - ave_distance_to_centroid)
+            reward = 1/2*1/(REWARD_DISTANCE - distance_to_target)
 
         RL.store_transition(observation, action, reward, observation_)
 
         ep_r += reward
+        print('current reward is :',reward)
         if total_steps > 1000:
             RL.learn()
 

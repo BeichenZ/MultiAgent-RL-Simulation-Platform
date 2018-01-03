@@ -26,8 +26,9 @@ class SheepEnv(gym.Env):
   FINISH_RADIUS = 30
   Default_SheepCount = 30
   Default_DogCount = 1
+  DISCRETE_Action_Count = 4 #Number of action when discrete number of action spaces is used
   def __init__(self):
-    self.action_space = spaces.Discrete(4)
+    self.action_space = spaces.Discrete(self.DISCRETE_Action_Count)
     self.viewer = None
 
     self.sheepGroup = SheepGroup.SheepGroup( self.Default_SheepCount, self.Default_DogCount,self.SCREEN_WIDTH,self.SCREEN_HEIGHT);
@@ -53,8 +54,13 @@ class SheepEnv(gym.Env):
           return -1
   def _step(self, action=None):
     #TO-Do: Implementi Action for Shepherd
+    assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
+    self.sheepGroup.executeDogAction(action)
+
     self.sheepGroup.cleanPreviousState()
     self.sheepGroup.updateLocations()
+
+    #Handle Different Action Space Choice
     #observation consists on distance of centroid to target and average distance of sheeps to centroid
     #assume one dog situation
     allDogLocations=self.sheepGroup.get_DogsLocation()

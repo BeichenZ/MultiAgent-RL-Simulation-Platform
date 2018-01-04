@@ -49,7 +49,7 @@ class SheepEnv(gym.Env):
 
   def if_done(self):
       #when it done we need to make sure the average radius of the herd is smaller than a fixed radius
-      if(self.get_dist_sqr_to_target() <= self.FINISH_RADIUS*self.FINISH_RADIUS) and (self.get_cluster_dist_from_centroid()<= self.SHEEP_RADIUS):
+      if(self.get_dist_sqr_to_target() <= self.FINISH_RADIUS) and (self.get_cluster_dist_from_centroid()<= self.SHEEP_RADIUS):
           return True
       return False
   def get_reward(self):
@@ -112,7 +112,7 @@ class SheepEnv(gym.Env):
 
   def get_dist_sqr_to_target(self):
     centroid = self.sheepGroup.get_sheep_centroid()
-    return (self.TARGET_X - centroid[0])**2 + (self.TARGET_Y - centroid[1])**2
+    return np.sqrt((self.TARGET_X - centroid[0])**2 + (self.TARGET_Y - centroid[1])**2)
 
   def key_press(self, symbol, modifier):
       key_moveSize = 30

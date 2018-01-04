@@ -47,16 +47,23 @@ for i_episode in range(1000):
         # Add the sheep's centroid
         DogX,DogY,SheepCOMX,SheepCOMY,distance_to_sheep_centroid,distance_to_target, ave_distance_to_centroid = observation_
 
-
+        # check the sheep movement in this step
+        sheepMovementX = observation_[2]-observation[2]
+        sheepMovementY = observation_[3]-observation[3]
+        print('the movement of the sheep: ',sheepMovementX,sheepMovementY)
+        # check if the sheep is closer to the final destination
+        movement = observation_[5]-observation[5]
+        reward = -movement
+        print('reward from the movement of the sheep is ', reward)
 
         # when the com is within a radius to the final destination there is a reward to the dog
         if (distance_to_target <= REWARD_DISTANCE and ave_distance_to_centroid <= REWARD_RADIUS):
 
             r1 = 1/distance_to_target
             r2 = 1/ave_distance_to_centroid
-            reward = r1+r2
+            reward = reward + r1+r2
         elif (distance_to_target <= REWARD_DISTANCE):
-            reward = 1/2*1/(REWARD_DISTANCE - distance_to_target)
+            reward = reward + 1/2*1/(REWARD_DISTANCE - distance_to_target)
 
         RL.store_transition(observation, action, reward, observation_)
 

@@ -27,8 +27,8 @@ class SheepGroup():
         for i in range(sheepCount):
             self.SheepList.append(SingleSheep())
             #Dog and Sheep are mathematically similar in nature. We do not feel a need to have a separate class
-            if i < DogCount:
-                self.DogList.append(SingleSheep())
+        for i in range(DogCount):
+            self.DogList.append(SingleSheep())
 
     def cleanPreviousState(self):
         self.allSheepIdle = False

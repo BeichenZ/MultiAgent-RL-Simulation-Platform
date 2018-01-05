@@ -280,6 +280,7 @@ class Wrapper(Env):
         return self.env.step(action)
 
     def _reset(self, **kwargs):
+        print('hi')
         return self.env.reset(**kwargs)
 
     def _render(self, mode='human', close=False):
@@ -308,6 +309,7 @@ class Wrapper(Env):
 
 class ObservationWrapper(Wrapper):
     def _reset(self, **kwargs):
+        print('OBSERVE')
         observation = self.env.reset(**kwargs)
         return self._observation(observation)
 

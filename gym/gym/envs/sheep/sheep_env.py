@@ -27,10 +27,10 @@ class SheepEnv(gym.Env):
   #finishing radius can be changed later
   FINISH_RADIUS = 100
   SHEEP_RADIUS = 50
-  Default_SheepCount = 30
+  Default_SheepCount = 0
   Default_DogCount = 1
   DISCRETE_Action_Count = 4 #Number of action when discrete number of action spaces is used
-  FEATURE_Count = 7
+  FEATURE_Count = 3
   def __init__(self):
     np.random.seed(int(time.time()))
     self.action_space = spaces.Discrete(self.DISCRETE_Action_Count)
@@ -49,7 +49,7 @@ class SheepEnv(gym.Env):
 
   def if_done(self):
       #when it done we need to make sure the average radius of the herd is smaller than a fixed radius
-      if(self.get_dist_sqr_to_target() <= self.FINISH_RADIUS*self.FINISH_RADIUS) and (self.get_cluster_dist_from_centroid()<= self.SHEEP_RADIUS):
+      if(self.get_dist_sqr_to_target() <= self.FINISH_RADIUS*self.FINISH_RADIUS):
           return True
       return False
   def get_reward(self):
@@ -57,62 +57,47 @@ class SheepEnv(gym.Env):
       if(self.if_done()):
           return 100
       else:
-          return -1
+          return 100*(1060000 - self.get_dist_sqr_to_target())/1060000
   def _step(self, action=None):
     #TO-Do: Implementi Action for Shepherd
     assert self.action_space.contains(action), "%r (%s) invalid" % (action, type(action))
     self.sheepGroup.executeDogAction(action)
 
     self.sheepGroup.cleanPreviousState()
-    self.sheepGroup.updateLocations()
 
     #Handle Different Action Space Choice
     #observation consists on distance of centroid to target and average distance of sheeps to centroid
     #assume one dog situation
     allDogLocations=self.sheepGroup.get_DogsLocation()
-    dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
     #assume the dog can see the centroid location of the sheep
-    SheepCentroid = self.sheepGroup.get_sheep_centroid()
-    return [allDogLocations[0][0],allDogLocations[0][1],SheepCentroid[0],SheepCentroid[1],dog_to_sheep_centroid,self.get_dist_sqr_to_target(),self.get_cluster_dist_from_centroid()],self.get_reward(),self.if_done(),{}
+    return [50*int(round(allDogLocations[0][0]/50)), 50*int(round(allDogLocations[0][1]/50)), 0],self.get_reward(),self.if_done(),{}
+    #return [50*int(round(allDogLocations[0][0]/50)), 50*int(round(allDogLocations[0][1]/50)), self.get_dist_sqr_to_target()],self.get_reward(),self.if_done(),{}
+
   def _seed(self, seed=None):
       self.np_random, seed = seeding.np_random(seed)
       return [seed]
 
-  def _reset(self):
-      # Need to be changed later
-      if (self.sheepGroup.SheepList is not None):
-          for sheep in self.sheepGroup.SheepList:
-              sheep.X = np.random.randint(0, self.SCREEN_WIDTH)
-              sheep.Y = np.random.randint(0, self.SCREEN_HEIGHT)
-              sheep.velocityX = np.random.random_integers(0, 1000) / 500
-              sheep.velocityY = np.random.random_integers(0, 1000) / 500
-      if (self.sheepGroup.DogList is not None):
-          for dog in self.sheepGroup.DogList:
-              dog.X = np.random.randint(0, self.SCREEN_WIDTH)
-              dog.Y = sheep.Y = np.random.randint(0, self.SCREEN_HEIGHT)
-              dog.velocityX = np.random.random_integers(0, 1000) / 500
-              dog.velocityY = np.random.random_integers(0, 1000) / 500
-      allDogLocations = self.sheepGroup.get_DogsLocation()
-      dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
-      SheepCentroid = self.sheepGroup.get_sheep_centroid()
-      return [allDogLocations[0][0], allDogLocations[0][1], SheepCentroid[0], SheepCentroid[1], dog_to_sheep_centroid, self.get_dist_sqr_to_target(),
-              self.get_cluster_dist_from_centroid()]
-
-  def get_firstDogToSheepCentroidDist(self):
-      centroid = self.sheepGroup.get_sheep_centroid()
-      return np.sqrt((self.sheepGroup.DogList[0].X-self.sheepGroup.centroid[0])**2+(self.sheepGroup.DogList[0].Y-self.sheepGroup.centroid[1])**2)
-
-  # sqrt(sum of squares of distances) / (number of sheep)
-  def get_cluster_dist_from_centroid(self):
-    centroid = self.sheepGroup.get_sheep_centroid()
-    sum_of_dist_sqr = 0
-    for sheep in self.sheepGroup.SheepList:
-      sum_of_dist_sqr += np.sqrt((sheep.X - centroid[0])**2 + (sheep.Y - centroid[1])**2)
-    return sum_of_dist_sqr/len(self.sheepGroup.SheepList)
-
   def get_dist_sqr_to_target(self):
-    centroid = self.sheepGroup.get_sheep_centroid()
-    return (self.TARGET_X - centroid[0])**2 + (self.TARGET_Y - centroid[1])**2
+      allDogLocations = self.sheepGroup.get_DogsLocation()
+      return 50*int(round((self.TARGET_X - allDogLocations[0][0])**2 + (self.TARGET_Y - allDogLocations[0][1])**2)/50)
+
+  def _reset(self):
+    # Need to be changed later
+    if (self.sheepGroup.SheepList is not None):
+        for sheep in self.sheepGroup.SheepList:
+            sheep.X = np.random.randint(0, self.SCREEN_WIDTH)
+            sheep.Y = np.random.randint(0, self.SCREEN_HEIGHT)
+            sheep.velocityX = np.random.random_integers(0, 1000) / 500
+            sheep.velocityY = np.random.random_integers(0, 1000) / 500
+    if (self.sheepGroup.DogList is not None):
+        for dog in self.sheepGroup.DogList:
+            dog.X = np.random.randint(0, self.SCREEN_WIDTH)
+            dog.Y = np.random.randint(0, self.SCREEN_HEIGHT)
+            dog.velocityX = np.random.random_integers(0, 1000) / 500
+            dog.velocityY = np.random.random_integers(0, 1000) / 500
+    allDogLocations = self.sheepGroup.get_DogsLocation() 
+    #return [50*int(round(allDogLocations[0][0]/50)), 50*int(round(allDogLocations[0][1]/50)), self.get_dist_sqr_to_target()]
+    return [50*int(round(allDogLocations[0][0]/50)), 50*int(round(allDogLocations[0][1]/50)), 0]
 
   def key_press(self, symbol, modifier):
       key_moveSize = 30
@@ -161,12 +146,6 @@ class SheepEnv(gym.Env):
         self.viewer.add_geom(target_circ)
         target_translation.set_translation(self.TARGET_X, self.TARGET_Y)
 
-        self.centroid_translation = rendering.Transform()
-        centroid_circ = rendering.make_circle(8)
-        centroid_circ.set_color(0, 0, 0.9)
-        centroid_circ.add_attr(self.centroid_translation)
-        self.viewer.add_geom(centroid_circ)
-
         self.sheepTranlations = []
         for sheep in curSheepList:
             translation = rendering.Transform()
@@ -188,9 +167,7 @@ class SheepEnv(gym.Env):
         translation.set_translation(curSheepList[ind].X,curSheepList[ind].Y)
     for ind, translation in enumerate(self.dogTranlations):
         translation.set_translation(curDogList[ind].X, curDogList[ind].Y)
-    
-    centroid_pos = self.sheepGroup.get_sheep_centroid()
-    self.centroid_translation.set_translation(centroid_pos[0], centroid_pos[1]) 
+  
 
     return self.viewer.render(return_rgb_array = mode=='rgb_array')
     

@@ -20,12 +20,12 @@ blue dot  = sheep center
 class SheepEnv(gym.Env):
   metadata = {'render.modes': ['human']}
   #Env Set-up variable
-  SCREEN_WIDTH =1200
-  SCREEN_HEIGHT = 700
-  TARGET_X = 900
-  TARGET_Y = 500
+  SCREEN_WIDTH =600
+  SCREEN_HEIGHT = 400
+  TARGET_X = 450
+  TARGET_Y = 300
   #finishing radius can be changed later
-  FINISH_RADIUS = 100
+  FINISH_RADIUS = 60
   SHEEP_RADIUS = 50
   Default_SheepCount = 30
   Default_DogCount = 1

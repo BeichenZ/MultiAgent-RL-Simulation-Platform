@@ -30,14 +30,14 @@ REWARD_RADIUS= 50
 
 
 
-for i_episode in range(1000):
+for i_episode in range(100):
 
     #reset is not correctly working
     observation = env._reset()
     observation = np.asarray(observation)
     ep_r = 0
     while True:
-        env.render()
+        #env.render()
         print(observation)
         action = RL.choose_action(observation)
 
@@ -76,7 +76,7 @@ for i_episode in range(1000):
             print('episode: ', i_episode,
                   'ep_r: ', round(ep_r, 2),
                   ' epsilon: ', round(RL.epsilon, 2))
-            time.sleep(3)
+            #time.sleep(3)
             break
 
         observation = np.asarray(observation_)

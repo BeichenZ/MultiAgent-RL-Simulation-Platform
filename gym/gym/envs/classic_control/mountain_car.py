@@ -48,7 +48,6 @@ class MountainCarEnv(gym.Env):
 
         done = bool(position >= self.goal_position)
         reward = -1.0
-
         self.state = (position, velocity)
         return np.array(self.state), reward, done, {}
 

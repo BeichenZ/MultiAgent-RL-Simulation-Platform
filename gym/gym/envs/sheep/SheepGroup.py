@@ -54,9 +54,9 @@ class SheepGroup():
                 #sheep.velocityX = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
                 #sheep.velocityY = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
                 if(sheep.velocityX > sheep.MaxVelocity/10):
-                    sheep.velocityX = sheep.velocityX/2
+                    sheep.velocityX = sheep.velocityX/30
                 if(sheep.velocityY > sheep.MaxVelocity/10):
-                    sheep.velocityY = sheep.velocityY/2
+                    sheep.velocityY = sheep.velocityY/30
                 sheep.validateParams(IdleMode=self.allSheepIdle)
                 sheep.UpdateLocation()
         else:
@@ -104,6 +104,9 @@ class SheepGroup():
             self.DogList[0].velocityX = -ConstantSpeed
         elif(action ==3 ):#Right
             self.DogList[0].velocityX = ConstantSpeed
+        #elif(action == 4):#Stay at where it is
+           # self.DogList[0].velocityX = 0
+           # self.DogList[0].velocityY = 0
         self.DogList[0].validateParams()
         self.DogList[0].UpdateLocation()
         
@@ -147,7 +150,7 @@ class SingleSheep():
     separationW_def = 10;
     dog_avoidanceW_def = 10;
     goalW_def = 100;
-    MaxVelocity_def = 30;
+    MaxVelocity_def = 25;
     FieldofView_def = 180;
     #Place-holder for later Image
     sheepImage_def = "/resource/sheep1.png"

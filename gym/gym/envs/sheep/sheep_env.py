@@ -20,17 +20,17 @@ blue dot  = sheep center
 class SheepEnv(gym.Env):
   metadata = {'render.modes': ['human']}
   #Env Set-up variable
-  SCREEN_WIDTH =1200
-  SCREEN_HEIGHT = 700
-  TARGET_X = 900
-  TARGET_Y = 500
+  SCREEN_WIDTH = 600
+  SCREEN_HEIGHT = 400
+  TARGET_X = 400
+  TARGET_Y = 300
   #finishing radius can be changed later
-  FINISH_RADIUS = 100
+  FINISH_RADIUS = 60
   SHEEP_RADIUS = 50
   Default_SheepCount = 30
   Default_DogCount = 1
   DISCRETE_Action_Count = 4 #Number of action when discrete number of action spaces is used
-  FEATURE_Count = 7
+  FEATURE_Count = 9
   def __init__(self):
     np.random.seed(int(time.time()))
     self.action_space = spaces.Discrete(self.DISCRETE_Action_Count)
@@ -73,7 +73,14 @@ class SheepEnv(gym.Env):
     dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
     #assume the dog can see the centroid location of the sheep
     SheepCentroid = self.sheepGroup.get_sheep_centroid()
-    return [allDogLocations[0][0],allDogLocations[0][1],SheepCentroid[0],SheepCentroid[1],dog_to_sheep_centroid,self.get_dist_sqr_to_target(),self.get_cluster_dist_from_centroid()],self.get_reward(),self.if_done(),{}
+    return [allDogLocations[0][0], # simple discretization
+            allDogLocations[0][1],
+            SheepCentroid[0],
+            SheepCentroid[1],
+            dog_to_sheep_centroid,
+            self.get_dist_sqr_to_target(),
+            self.get_cluster_dist_from_centroid(),
+            self.TARGET_X,self.TARGET_Y],self.get_reward(),self.if_done(),{}
   def _seed(self, seed=None):
       self.np_random, seed = seeding.np_random(seed)
       return [seed]
@@ -96,7 +103,7 @@ class SheepEnv(gym.Env):
       dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
       SheepCentroid = self.sheepGroup.get_sheep_centroid()
       return [allDogLocations[0][0], allDogLocations[0][1], SheepCentroid[0], SheepCentroid[1], dog_to_sheep_centroid, self.get_dist_sqr_to_target(),
-              self.get_cluster_dist_from_centroid()]
+              self.get_cluster_dist_from_centroid(), self.TARGET_X, self.TARGET_Y]
 
   def get_firstDogToSheepCentroidDist(self):
       centroid = self.sheepGroup.get_sheep_centroid()

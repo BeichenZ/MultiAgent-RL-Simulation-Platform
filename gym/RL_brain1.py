@@ -133,7 +133,7 @@ class DQNPrioritizedReplay:
             n_features,
             learning_rate=0.005,
             reward_decay=0.9,
-            e_greedy=0.9,
+            e_greedy=0.5,
             replace_target_iter=500,
             memory_size=10000,
             batch_size=32,

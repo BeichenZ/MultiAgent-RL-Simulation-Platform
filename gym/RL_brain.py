@@ -24,11 +24,12 @@ class DeepQNetwork:
             n_features,
             learning_rate=0.01,
             reward_decay=0.9,
-            e_greedy=0.9,
+            e_greedy=0.5,
             replace_target_iter=300,
             memory_size=500,
             batch_size=32,
             e_greedy_increment=None,
+            random=False,
             output_graph=False,
     ):
         self.n_actions = n_actions
@@ -41,6 +42,7 @@ class DeepQNetwork:
         self.batch_size = batch_size
         self.epsilon_increment = e_greedy_increment
         self.epsilon = 0 if e_greedy_increment is not None else self.epsilon_max
+        self.random = random
 
         # total learning step
         self.learn_step_counter = 0
@@ -113,14 +115,19 @@ class DeepQNetwork:
     def choose_action(self, observation):
         # to have batch dimension when feed into tf placeholder
         #pdb.set_trace()
-        observation = observation[np.newaxis, :]
 
-        if np.random.uniform() < self.epsilon:
-            # forward feed the observation and get q value for every actions
-            actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
-            action = np.argmax(actions_value)
-        else:
+        if self.random:
             action = np.random.randint(0, self.n_actions)
+        else:
+            observation = observation[np.newaxis, :]
+
+            if np.random.uniform() < self.epsilon:
+                # forward feed the observation and get q value for every actions
+                actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
+                action = np.argmax(actions_value)
+            else:
+                action = np.random.randint(0, self.n_actions)
+
         return action
 
     def learn(self):

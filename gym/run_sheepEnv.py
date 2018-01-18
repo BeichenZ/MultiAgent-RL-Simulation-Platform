@@ -50,7 +50,7 @@ def train(RL):
         observation = np.asarray(observation)
 
         while True:
-            #env.render()
+            env.render()
 
             action = RL.choose_action(observation)
 

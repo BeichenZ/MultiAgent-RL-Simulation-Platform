@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/MultiAgent-RL-Simulation-Platform.iml" filepath="$PROJECT_DIR$/.idea/MultiAgent-RL-Simulation-Platform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ReinforcementLearningPER.iml" filepath="$PROJECT_DIR$/.idea/ReinforcementLearningPER.iml" />
     </modules>
   </component>
 </project>

@@ -10,9 +10,11 @@ gym: 0.8.0
 
 import numpy as np
 import tensorflow as tf
+import time
 
-np.random.seed(1)
-tf.set_random_seed(1)
+np.random.seed(int((time.time()-int(time.time()))*100000))
+ranNum = np.random.randint(2000)
+tf.set_random_seed(ranNum)
 
 
 class SumTree(object):
@@ -235,8 +237,10 @@ class DQNPrioritizedReplay:
         if np.random.uniform() < self.epsilon:
             actions_value = self.sess.run(self.q_eval, feed_dict={self.s: observation})
             action = np.argmax(actions_value)
+            #print('The epsilon is'+ str(self.epsilon)+'The action it chose is '+ str(action))
         else:
             action = np.random.randint(0, self.n_actions)
+            #print('The epsilon is' + str(self.epsilon))
         return action
 
     def learn(self):

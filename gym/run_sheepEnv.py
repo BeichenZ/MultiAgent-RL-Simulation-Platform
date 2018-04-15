@@ -8,10 +8,10 @@ gym: 0.8.0
 
 
 import gym
-from RL_brain1 import DQNPrioritizedReplay
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import numpy as np
+from RL_brain1 import DQNPrioritizedReplay
 
 
 env = gym.make('sheep-v0')
@@ -27,13 +27,13 @@ sess = tf.Session()
 with tf.variable_scope('natural_DQN'):
     RL_natural = DQNPrioritizedReplay(
         n_actions=ACTION_SPACE, n_features=env.FEATURE_Count, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.005, sess=sess, prioritized=False,
+        e_greedy_increment=None, sess=sess, prioritized=True,
     )
 
 with tf.variable_scope('DQN_with_prioritized_replay'):
     RL_prio = DQNPrioritizedReplay(
         n_actions=ACTION_SPACE, n_features=env.FEATURE_Count, memory_size=MEMORY_SIZE,
-        e_greedy_increment=0.005, sess=sess, prioritized=True, output_graph=True,
+        e_greedy_increment=0.005, sess=sess, prioritized=True, output_graph=False,
     )
 
 sess.run(tf.global_variables_initializer())
@@ -44,8 +44,8 @@ def train(RL):
     total_steps = 0
     steps = []
     episodes = []
-    for i_episode in range(100):
-
+    for i_episode in range(10):
+        print('this is '+str(i_episode)+' episode')
         observation = env._reset()
         observation = np.asarray(observation)
 
@@ -65,9 +65,9 @@ def train(RL):
 
             # check if the sheep is closer to the final destination
             movement = observation_[5] - observation[5]
-            print('the movement of the sheep: ', movement)
+           # print('the movement of the sheep: ', movement)
             reward = np.sign(movement-IDLE_DISTANCE)
-            print('reward from the movement of the sheep is ', reward)
+           # print('reward from the movement of the sheep is ', reward)
 
             # when the com is within a radius to the final destination there is a reward to the dog
             if (distance_to_target <= REWARD_DISTANCE and ave_distance_to_centroid <= REWARD_RADIUS):
@@ -79,8 +79,9 @@ def train(RL):
                 reward = reward + 1 / 2 * 1 / (REWARD_DISTANCE - distance_to_target)
 
             RL.store_transition(observation, action, reward, observation_)
-
-            if total_steps > MEMORY_SIZE:
+            #print('reward is ', reward)
+            if total_steps > 1000:
+                #used to be MEMORY_SIZE
                 RL.learn()
 
             if done:

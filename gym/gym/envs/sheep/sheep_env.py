@@ -18,7 +18,7 @@ blue dot  = sheep center
 '''
 
 class SheepEnv(gym.Env):
-  metadata = {'render.modes': ['human']}
+  metadata = {'render.modes': ['human','rgb_array']}
   #Env Set-up variable
   SCREEN_WIDTH = 600
   SCREEN_HEIGHT = 400
@@ -31,8 +31,12 @@ class SheepEnv(gym.Env):
   Default_DogCount = 1
   DISCRETE_Action_Count = 4 #Number of action when discrete number of action spaces is used
   FEATURE_Count = 9
-  def __init__(self):
+  def __init__(self,obs_type='ram'):
+    assert obs_type in ('ram', 'image')
+    self._obs_type = obs_type
     np.random.seed(int(time.time()))
+    print('initilize with seed '+ str(int(time.time())))
+    self._seed()
     self.action_space = spaces.Discrete(self.DISCRETE_Action_Count)
     self.viewer = None
 
@@ -43,8 +47,13 @@ class SheepEnv(gym.Env):
 
     # Need to figure out the high for our case
     high = np.array([np.inf] * 6)
-    self.observation_space = spaces.Box(-high, high)
-    self._seed()
+    if self._obs_type == 'ram':
+        self.observation_space = spaces.Box(-high, high)
+    elif self._obs_type == 'image':
+        self.observation_space = spaces.Box(low=0, high=255, shape=(self.SCREEN_HEIGHT,self.SCREEN_WIDTH,3))
+    else:
+        raise error.Error('Unrecognized obervation type: ()'.format(self._obs_type))
+
     return
 
   def if_done(self):
@@ -66,24 +75,42 @@ class SheepEnv(gym.Env):
     self.sheepGroup.cleanPreviousState()
     self.sheepGroup.updateLocations()
 
-    #Handle Different Action Space Choice
-    #observation consists on distance of centroid to target and average distance of sheeps to centroid
-    #assume one dog situation
-    allDogLocations=self.sheepGroup.get_DogsLocation()
-    dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
-    #assume the dog can see the centroid location of the sheep
-    SheepCentroid = self.sheepGroup.get_sheep_centroid()
-    return [allDogLocations[0][0], # simple discretization
-            allDogLocations[0][1],
-            SheepCentroid[0],
-            SheepCentroid[1],
-            dog_to_sheep_centroid,
-            self.get_dist_sqr_to_target(),
-            self.get_cluster_dist_from_centroid(),
-            self.TARGET_X,self.TARGET_Y],self.get_reward(),self.if_done(),{}
+    # #Handle Different Action Space Choice
+    # #observation consists on distance of centroid to target and average distance of sheeps to centroid
+    # #assume one dog situation
+    # allDogLocations=self.sheepGroup.get_DogsLocation()
+    # dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
+    # #assume the dog can see the centroid location of the sheep
+    # SheepCentroid = self.sheepGroup.get_sheep_centroid()
+    ob = self._get_obs()
+    return ob,self.get_reward(),self.if_done(),{}
+
+  def _get_obs(self):
+      if self._obs_type == 'ram':
+          # observation consists on distance of centroid to target and average distance of sheeps to centroid
+          # assume one dog situation
+          allDogLocations = self.sheepGroup.get_DogsLocation()
+          dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
+          # assume the dog can see the centroid location of the sheep
+          SheepCentroid = self.sheepGroup.get_sheep_centroid()
+          #img = self.viewer.render(return_rgb_array=True)
+          #print('the size of the image '+str(np.shape(img)))
+          return [allDogLocations[0][0],  # simple discretization
+                  allDogLocations[0][1],
+                  SheepCentroid[0],
+                  SheepCentroid[1],
+                  dog_to_sheep_centroid,
+                  self.get_dist_sqr_to_target(),
+                  self.get_cluster_dist_from_centroid(),
+                  self.TARGET_X, self.TARGET_Y]
+      elif self._obs_type == 'image':
+          img = self.viewer.render(return_rgb_array=True)
+          return img
+
   def _seed(self, seed=None):
       self.np_random, seed = seeding.np_random(seed)
-      return [seed]
+      seed2 = seeding.hash_seed(seed +1 )% 2**31
+      return [seed2]
 
   def _reset(self):
       # Need to be changed later
@@ -96,9 +123,11 @@ class SheepEnv(gym.Env):
       if (self.sheepGroup.DogList is not None):
           for dog in self.sheepGroup.DogList:
               dog.X = np.random.randint(0, self.SCREEN_WIDTH)
-              dog.Y = sheep.Y = np.random.randint(0, self.SCREEN_HEIGHT)
-              dog.velocityX = np.random.random_integers(0, 1000) / 500
-              dog.velocityY = np.random.random_integers(0, 1000) / 500
+              #dog.Y = sheep.Y = np.random.randint(0, self.SCREEN_HEIGHT)
+              dog.Y = np.random.randint(0, self.SCREEN_HEIGHT)
+              ################################################################################3
+              dog.velocityX = np.random.random_integers(0, 1000) / 400
+              dog.velocityY = np.random.random_integers(0, 1000) / 400
       allDogLocations = self.sheepGroup.get_DogsLocation()
       dog_to_sheep_centroid = self.get_firstDogToSheepCentroidDist()
       SheepCentroid = self.sheepGroup.get_sheep_centroid()
@@ -199,5 +228,6 @@ class SheepEnv(gym.Env):
     centroid_pos = self.sheepGroup.get_sheep_centroid()
     self.centroid_translation.set_translation(centroid_pos[0], centroid_pos[1]) 
 
+    #print(self.viewer.render(return_rgb_array = mode=='rgb_array'))
     return self.viewer.render(return_rgb_array = mode=='rgb_array')
     

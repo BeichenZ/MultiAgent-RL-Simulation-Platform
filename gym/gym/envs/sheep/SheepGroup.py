@@ -47,18 +47,20 @@ class SheepGroup():
         #Calculate Velocity Change
 
         if (self.allSheepIdle):
-            seedCounter=0;
+            #seedCounter = 0
             for sheep in self.SheepList:
-                seedCounter += 1
-                numpy.random.seed(int(time())+seedCounter)
+                #seedCounter += 1
+                #print('current time is '+ str(time()));
+                #numpy.random.seed(int(time())+seedCounter)
                 #sheep.velocityX = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
                 #sheep.velocityY = numpy.sign(numpy.random.randint(-100,100)/100)*numpy.random.randint(-300, 300)/100
-                if(sheep.velocityX > sheep.MaxVelocity/10):
-                    sheep.velocityX = sheep.velocityX/30
-                if(sheep.velocityY > sheep.MaxVelocity/10):
-                    sheep.velocityY = sheep.velocityY/30
+                if(sheep.velocityX > sheep.MaxVelocity/30):
+                    sheep.velocityX = sheep.velocityX/300
+                if(sheep.velocityY > sheep.MaxVelocity/30):
+                    sheep.velocityY = sheep.velocityY/300
                 sheep.validateParams(IdleMode=self.allSheepIdle)
                 sheep.UpdateLocation()
+                #seedCounter += 1
         else:
             #Check if all sheep are within preset radius
             for thisSheep in self.SheepList:
@@ -95,15 +97,19 @@ class SheepGroup():
     def executeDogAction(self,action):
         #Single Dog
         #For 4-Actions Space: up, down,left,right
-        ConstantSpeed = 30
+        ConstantSpeed = 40
         if(action == 0):#Up
             self.DogList[0].velocityY = ConstantSpeed
+            self.DogList[0].velocityX = 0
         elif(action == 1): #Down
             self.DogList[0].velocityY = -ConstantSpeed
+            self.DogList[0].velocityX = 0
         elif(action == 2):#Left
             self.DogList[0].velocityX = -ConstantSpeed
-        elif(action ==3 ):#Right
+            self.DogList[0].velocitY = 0
+        elif(action ==3 ):#RightY
             self.DogList[0].velocityX = ConstantSpeed
+            self.DogList[0].velocityY = 0
         #elif(action == 4):#Stay at where it is
            # self.DogList[0].velocityX = 0
            # self.DogList[0].velocityY = 0
@@ -279,7 +285,7 @@ class SingleSheep():
         nonCollidingModifier = 1
         if(IdleMode):
             edgeSpeedModifier = 2
-            nonCollidingModifier = 1
+            nonCollidingModifier = 2
         if self.X < 0 and self.velocityX < 0:
             self.velocityX = -edgeSpeedModifier*self.velocityX
             self.velocityY = nonCollidingModifier*self.velocityY
